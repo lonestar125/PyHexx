@@ -27,20 +27,20 @@ tile status standardisation:
 
 SEE HEXXAGON.JPG
 
-these are the delta values to be added to the selected tile to get all direct clone/jump neighbours:
-[x, y] = [row, column] # this will need to be flipped potentially as the indexes work y[x]
+### these are the delta values to be added to the selected tile to get all direct clone/jump neighbours:
+
+[x, y] = [row, column] (this will need to be flipped potentially as the indexes in a 2d array work as y[x])
+
 [-1, 0], [1, 0], [0, -1], [-1, -1], [0, 1], [1, 1] --> direct neighbours/clone tiles
+
 [2, 0], [-2, 0], [-2, -1], [1, -1], [-1, 1], [2, 1], [0, 2], [-1, -2], [-2, -2], [0, 2], [1, 2], [2, 2] --> neighbours (2 tiles away)/jump tiles
 
 
 
 
-
--potential to add 4 player mode?, 
-
 # TODO:
 
-//BASE GAME/pvp with base board
+#### BASE GAME/pvp with base board
 - create a function that creates a hexxagon board with a given radius
 - create a function that returns the tile position/[x,y] of a given tile
 - create a function that returns the tile status of a given tile
@@ -49,12 +49,13 @@ these are the delta values to be added to the selected tile to get all direct cl
 - create a function that checks if the game is won
 - create a function that acts as the base game loop and takes in account who's turn it is
 
-//UI
+#### UI
 - flask web app
 - create a function that returns the board as a html table
 
 
-//POSSIBLITIES/LATER DEVELOPMENT
+#### POSSIBLITIES/LATER DEVELOPMENT
 - ai for the opponent, pytorch ml implementation
 - different board layouts/board layout choice
 - board creator/modifier (?) (choose size (radius), default tile places, blocked tiles)
+- potential to add 4 player mode (?) (not very important)
