@@ -8,10 +8,14 @@ star = pygame.image.load("star_sprite.png").convert_alpha()
 star_rect = star.get_rect()
 stars = []
 
+speed1 = 0.8
+speed2 = 1.2
+
 for i in range(100):
     x = random.randint(0, 800)
     y = random.randint(0, 600)
-    stars.append((x, y))
+    speed = speed1 if random.random() < 0.5 else speed2
+    stars.append((x, y, speed))
 
 running = True
 while running:
@@ -21,13 +25,13 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    for i, (x, y) in enumerate(stars):
-        x -= 1
+    for i, (x, y, speed) in enumerate(stars):
+        x -= speed
         if x < -star_rect.width:
             x = 800
-        stars[i] = (x, y)
+        stars[i] = (x, y, speed)
 
-    for x, y in stars:
+    for x, y, speed in stars:
         screen.blit(star, (x, y))
 
     pygame.display.update()
