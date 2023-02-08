@@ -1,0 +1,15 @@
+Fonction ideas:
+
+init_game(): Initialize Pygame, set the display screen size, and initialize other game properties such as the board size, tile size, hexagonal height, board width, and board height.
+
+create_board(): Create a grid of hexagonal tiles and store them in a board list. The tiles should have properties such as their position on the board and color.
+
+draw_tile(): Draw a single hexagonal tile on the screen. This function should take in a hexagonal tile sprite and render it on the screen.
+
+draw_board(): Loop through the board list and call the draw_tile() function for each hexagonal tile on the board.
+
+handle_input(): Handle user input, such as quitting the game or moving a tile.
+
+update_game(): Update the state of the game, such as moving a tile or checking for a win.
+
+run_game(): The main game loop that calls handle_input(), update_game(), and draw_board() in each iteration.
