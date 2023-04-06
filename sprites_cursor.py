@@ -8,9 +8,11 @@ class Cursor(pygame.sprite.Sprite):
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
 
+
 # Genral Setup
 pygame.init()
 clock = pygame.time.Clock()
+
 
 # Game Screen
 S_WIDTH = 900
