@@ -12,13 +12,22 @@ def create_board():
 	Create the hexxagon board.
 	"""
 	#grid: coord x, coord y, state (-1, hidden, 0 = empty, 1 = player 1, 2 = player 2)
-	grid = [[[x*36, y*50, 0] for x in range(9)] for y in range(9)]
+	grid = [[[x*36, y*50, -1] for x in range(9)] for y in range(9)]
+	
 	for line in grid:
 		for el in line:
 			if int(el[0]/36) % 2 == 0:
 				el[1] += 25
+	
+
+	activated = [[2, 7], [2, 8], [1, 8], [1, 9], [0, 9], [1, 9], [1, 8], [2, 8], [2, 7]]
+
+	for i in range(len(activated)):
+		for j in range(activated[i][0], activated[i][1]):
+			grid[j][i][2] = 0
 
 	return grid
+	
 
 print(create_board())
 	
