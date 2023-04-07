@@ -2,23 +2,38 @@
  
 # Import standard modules.
 import sys
- 
 # Import non-standard modules.
 import pygame
 from pygame.locals import *
+
+pygame.display.set_mode((800, 600))
+
+
+class Tile(pygame.sprite.Sprite):
+	def __init__(self, pos):
+		super(Tile, self).__init__()
+		self.image = pygame.image.load("resized_HEX.png").convert_alpha()
+		self.rect = self.image.get_rect()
+		self.rect.center = pos
+
+	def update(self):
+		pass
 
 def create_board():
 	"""
 	Create the hexxagon board.
 	"""
+	x_size = 36
+	y_size = 50
 	#grid: coord x, coord y, state (-1, hidden, 0 = empty, 1 = player 1, 2 = player 2)
-	grid = [[[x*36, y*50, -1] for x in range(9)] for y in range(9)]
+	grid = [[[x*x_size, y*y_size, -1] for x in range(9)] for y in range(9)]
 	
+	margin = 238
 	for line in grid:
 		for el in line:
-			if int(el[0]/36) % 2 == 0:
+			if int(el[0] /x_size) % 2 == 0:
 				el[1] += 25
-	
+			el[0] += margin
 
 	activated = [[2, 7], [2, 8], [1, 8], [1, 9], [0, 9], [1, 9], [1, 8], [2, 8], [2, 7]]
 
@@ -26,12 +41,17 @@ def create_board():
 		for j in range(activated[i][0], activated[i][1]):
 			grid[j][i][2] = 0
 
-	return grid
-	
+	group = pygame.sprite.RenderPlain()
+	for line in grid:
+		for el in line:
+			if el[2]!= -1:
+				tile = Tile((el[0], el[1]))
+				el.append(tile)
+				group.add(tile)
 
-print(create_board())
+	return grid, group
 	
-def update(dt):
+def update(dt, grid):
 	"""
 	Update game. Called once per frame.
 	dt is the amount of time passed since last frame.
@@ -49,24 +69,23 @@ def update(dt):
 			sys.exit() # Not including this line crashes the script on Windows. Possibly
 			# on other operating systems too, but I don't know for sure.
 	# Handle other events as you wish.
+		if event.type == MOUSEBUTTONDOWN: 
+			x,y = event.pos
+
+			for line in grid:
+				for el in line:
+					if el[2] != -1:
+						if el[3].rect.collidepoint(x,y): 
+							print("clicked tile at", el[0], el[1])
  
-def draw(screen):
+def draw(screen, grid, group):
 	"""
 	Draw things to the window. Called once per frame.
 	"""
 	screen.fill((0, 0, 0)) # Fill the screen with black.
 
 	# Redraw screen here.
-	grid = create_board()
-	for line in grid:
-		for el in line:
-			if el[2] == 0:
-				img_i = pygame.image.load("resized_HEX.png").convert_alpha()
-				img = img_i.get_rect()
-				img.x = el[0]
-				img.y = el[1]
-				screen.blit(img_i, (img.x, img.y))
-
+	group.draw(screen)
 	# Flip the display so that the things we drew actually show up.
 	pygame.display.flip()
  
@@ -88,9 +107,12 @@ def runPyGame():
 
 	# Main game loop.
 	dt = 1/fps # dt is the time since last frame.
+	grid, group = create_board()
+	
+	print(grid)
 	while True: # Loop forever!
-		update(dt) # You can update/draw here, I've just moved the code for neatness.
-		draw(screen)
+		update(dt, grid) # You can update/draw here, I've just moved the code for neatness.
+		draw(screen, grid, group)
 
 		dt = fpsClock.tick(fps)
 
