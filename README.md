@@ -4,7 +4,7 @@
 ## [original/emulateur](https://www.retrogames.cz/play_710-DOS.php?language=EN)
 
 
-# Comment faire la liste de la grille?
+# Todo
 
 ```
 default board index representation (start from 0 instead of 1)
