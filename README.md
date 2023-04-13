@@ -6,6 +6,7 @@
 
 # Comment faire la liste de la grille?
 
+```
 default board index representation (start from 0 instead of 1)
 tile status standardisation:
 0: empty
@@ -58,5 +59,5 @@ stuff for later (in order of importance):
     add bots/algorithm/ai
     make random hidden tiles
     add sounds
-    
+```
     
