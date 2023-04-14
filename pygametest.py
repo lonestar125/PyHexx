@@ -40,6 +40,7 @@ def create_board():
 	grid = [[{"x": x*x_size, "y": y*y_size, "status": -1, "outline": 0} for x in range(9)] for y in range(9)]
 	
 	margin = 238
+	# offset every second row by 25 on the y
 	for line in grid:
 		for el in line:
 			if int(el["x"] /x_size) % 2 == 0:
@@ -148,6 +149,7 @@ def end_turn(cloneable, jumpable, current_player):
 	jumpable = []
 	score = get_score()
 	print(f"score: {score}")
+	current_player = abs(current_player - 3)
 	if check_victory(score) != None:
 		print("Victory not fully implemented")
 		global grid
@@ -155,7 +157,6 @@ def end_turn(cloneable, jumpable, current_player):
 		group.empty()
 		grid, group = create_board()
 		current_player = 1
-	current_player = abs(current_player - 3)
 	return cloneable, jumpable, current_player
 
 def update(cloneable, jumpable, selected_tile, current_player, score):
@@ -192,7 +193,6 @@ def update(cloneable, jumpable, selected_tile, current_player, score):
 							el["status"] = current_player
 							el["tile"].update(el)
 							update_neighbours(line.index(el), grid.index(line), current_player)
-							clear_outlines()
 							cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 
 					
