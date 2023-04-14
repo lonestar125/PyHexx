@@ -20,7 +20,6 @@ class Tile(pygame.sprite.Sprite):
 
 
 	def update(self, grid_el):
-		print(grid_el)
 		if grid_el["status"] == 0:
 			self.image = pygame.image.load("Sprites/resized_HEX.png").convert_alpha()
 		if grid_el["status"] == 1:
@@ -86,11 +85,6 @@ def create_board():
 
 
 def check_cloneable(x, y, cloneable):
-	# reset clone and jump outline
-	for line in grid:
-		for el in line:
-			el["outline"] = 0
-
 	cloneable = []
 	for el in even_n1 if x % 2 == 0 else odd_n1:
 		try: 
@@ -102,7 +96,6 @@ def check_cloneable(x, y, cloneable):
 	return cloneable
 
 def check_jumpable(x, y, jumpable):
-
 	jumpable = []
 	for el in even_n2 if x % 2 == 0 else odd_n2:
 		try:
@@ -122,9 +115,50 @@ def update_neighbours(x, y, current_player):
 		except IndexError: # not shit code tkt
 			pass
 
+def clear_outlines():
+	for line in grid:
+		for el in line:
+			el["outline"] = 0
 
+def get_score():
+	score = [0, 0]
+	for line in grid:
+		for el in line:
+			if el["status"] >= 1:
+				score[el["status"] - 1] += 1
+	return score
 
-def update(cloneable, jumpable, selected_tile, current_player):
+def check_victory(score):
+	if score[0] == 0:
+		return 1 #p1 win
+	if score[1] == 0:
+		return 2 #p2 win
+	if score[0] + score[1] == len(group.sprites()): #number of sprites in sprite group = number of active tiles (has tile object in its dictionary)
+		if score[0] > score[1]:
+			return 1  #p1 win
+		if score[1] > score[0]:
+			return 2 #p2 win
+		else: # score[0] == score[1]
+			return 3 #tie
+	return None #no current winner
+
+def end_turn(cloneable, jumpable, current_player):
+	clear_outlines()
+	cloneable = []
+	jumpable = []
+	score = get_score()
+	print(f"score: {score}")
+	if check_victory(score) != None:
+		print("Victory not fully implemented")
+		global grid
+		global group
+		group.empty()
+		grid, group = create_board()
+		current_player = 1
+	current_player = abs(current_player - 3)
+	return cloneable, jumpable, current_player
+
+def update(cloneable, jumpable, selected_tile, current_player, score):
 	# Go through events that are passed to the script by the window.
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -144,6 +178,7 @@ def update(cloneable, jumpable, selected_tile, current_player):
 					if el["status"] == current_player:
 						pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y # position of mouse in image mask
 						if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): # checks that the position of the mouse when clicked is in the rect and the mask of the image
+							clear_outlines()
 							cloneable = check_cloneable(line.index(el), grid.index(line), cloneable)
 							jumpable = check_jumpable(line.index(el), grid.index(line), jumpable)
 							#print(f"x: {line.index(el)}, y: {grid.index(line)}")
@@ -157,12 +192,8 @@ def update(cloneable, jumpable, selected_tile, current_player):
 							el["status"] = current_player
 							el["tile"].update(el)
 							update_neighbours(line.index(el), grid.index(line), current_player)
-							for line in grid:
-								for el in line:
-									el["outline"] = 0
-							cloneable = []
-							jumpable = []
-							current_player = abs(current_player - 3)
+							clear_outlines()
+							cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 
 					
 					elif el["outline"] == 2:
@@ -173,14 +204,10 @@ def update(cloneable, jumpable, selected_tile, current_player):
 							selected_tile["status"] = 0
 							selected_tile["tile"].update(selected_tile)
 							update_neighbours(line.index(el), grid.index(line), current_player)
-							for line in grid:
-								for el in line:
-									el["outline"] = 0
-							cloneable = []
-							jumpable = []
-							current_player = abs(current_player - 3)
+							cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
+
 						
-	return cloneable, jumpable, selected_tile, current_player
+	return cloneable, jumpable, selected_tile, current_player, score
 					
 
 
@@ -211,16 +238,11 @@ def draw(cloneable, jumpable):
 def runPyGame():
 	pygame.init()
 	
-	global group
+	global group #pygame.sprite.Group object, contains all active tiles
 	global grid
 	grid, group = create_board()
 
-	# current player, 1 or 2, 
-	# end of turn: current_player = abs(current_player - 3)
-	global current_player
-	current_player = 1
-
-	# neighboring tile deltas, [x, y]
+	# neighboring tile deltas [x, y], these are added to a tile to find its neighbors, global because they will not be modified in the rest of the code
 	global even_n1
 	global odd_n1
 	even_n1 = [[0, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
@@ -231,14 +253,17 @@ def runPyGame():
 	even_n2 = [[0, -2], [-1, -1], [1, -1], [-2, -1], [2, -1], [-2, 0], [2, 0], [-2, 1], [-1, 2], [0, 2], [1, 2], [2, 1]]
 	odd_n2 = [[0, 2], [-1, 1], [1, 1], [-2, 1], [2, 1], [-2, 0], [2, 0], [-2, -1], [-1, -2], [0, -2], [1, -2], [2, -1]]
 
-	global selected_tile
+	# current player, 1 or 2, 
+	# end of turn: current_player = abs(current_player - 3)
+	current_player = 1
 	selected_tile = None
-
-	# Main game loop.
+	score = get_score()
 	cloneable = []
 	jumpable = []
+	# Main game loop.
+	print(len(group.sprites()))
 	while True:
-		cloneable, jumpable, selected_tile, current_player = update(cloneable, jumpable, selected_tile, current_player) 
-		draw(cloneable, jumpable) # the draw function may be merged with the update function if it isnt used for much
+		cloneable, jumpable, selected_tile, current_player, score = update(cloneable, jumpable, selected_tile, current_player, score) 
+		draw(cloneable, jumpable)
 
 runPyGame()
