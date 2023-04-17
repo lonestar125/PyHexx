@@ -10,6 +10,15 @@ width, height = 800, 600
 global screen
 screen = pygame.display.set_mode((width, height))
 
+# Sprites
+HEX = "Sprites/resized_HEX.png"
+HEX_P1 = "Sprites/HEX_p1.png"
+HEX_P2 = "Sprites/HEX_p2.png"
+HEX_H = "Sprites/HEX_hidden.png"
+HEX_J = "Sprites/HEX_jumpable.png"
+HEX_C = "Sprites/HEX_cloneable.png"
+
+
 class Tile(pygame.sprite.Sprite):
 	def __init__(self, grid_el):
 		super(Tile, self).__init__()
@@ -21,13 +30,13 @@ class Tile(pygame.sprite.Sprite):
 
 	def update(self, grid_el):
 		if grid_el["status"] == 0:
-			self.image = pygame.image.load("Sprites/resized_HEX.png").convert_alpha()
+			self.image = pygame.image.load(HEX).convert_alpha()
 		if grid_el["status"] == 1:
-			self.image = pygame.image.load("Sprites/HEX_p1.png").convert_alpha()
+			self.image = pygame.image.load(HEX_P1).convert_alpha()
 		if grid_el["status"] == 2:
-			self.image = pygame.image.load("Sprites/HEX_p2.png").convert_alpha()
+			self.image = pygame.image.load(HEX_P2).convert_alpha()
 		if grid_el["status"] == -1:
-			self.image = pygame.image.load("Sprites/HEX_hidden.png").convert_alpha()
+			self.image = pygame.image.load(HEX_H).convert_alpha()
 		
 	
 
@@ -316,14 +325,14 @@ def update(cloneable, jumpable, selected_tile, current_player, score):
 
 def draw_outlines(cloneable, jumpable):
 	for el in cloneable:
-		img_i = pygame.image.load("Sprites/HEX_cloneable.png").convert_alpha()
+		img_i = pygame.image.load(HEX_C).convert_alpha()
 		img = img_i.get_rect()
 		img.x = el["x"]
 		img.y = el["y"]
 		screen.blit(img_i, (img.x, img.y))
 	
 	for el in jumpable:
-		img_i = pygame.image.load("Sprites/HEX_jumpable.png").convert_alpha()
+		img_i = pygame.image.load(HEX_J).convert_alpha()
 		img = img_i.get_rect()
 		img.x = el["x"]
 		img.y = el["y"]
