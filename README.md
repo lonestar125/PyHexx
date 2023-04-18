@@ -5,10 +5,10 @@
     
     board stuff:
         - reset button in board editor
-        - save edited board in a variable (must be a deep copy (possibly without tile objects as idk what happens with those))
-        - reset edited board to its orginial state when game ends
+        - save edited board in a variable (must be a deep copy (possibly without tile objects as idk what happens with those)) DONE
+        - reset edited board to its orginial state when game ends DONE
     
-    display scores in game
+    display scores in game DONE
     display winning player for a few seconds before returning to menu
 
     implement menu (this is implemented as logic but ui MUST be improved)
