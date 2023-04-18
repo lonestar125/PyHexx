@@ -6,8 +6,8 @@ from pygame.locals import *
 
 # Set up the window, this needs to be outside of the main function because the Tile class needs access to the screen
 # and classes are loaded before everything else in python for some reason
-global screen
 width, height = 800, 600
+global screen
 screen = pygame.display.set_mode((width, height))
 
 class Tile(pygame.sprite.Sprite):
@@ -28,7 +28,8 @@ class Tile(pygame.sprite.Sprite):
 			self.image = pygame.image.load("Sprites/blue.png").convert_alpha()
 		if grid_el["status"] == -1:
 			self.image = pygame.image.load("Sprites/hidden.png").convert_alpha()
-
+		
+	
 
 
 def create_board():
@@ -86,7 +87,7 @@ def create_board():
 		#del grid[el[1]][el[0]]["tile"]
 		
 	return grid, group
-
+	
 
 def check_cloneable(x, y, cloneable):
 	cloneable = []
@@ -158,16 +159,24 @@ def moves_left(current_player):
 	moves = []
 	for line in grid:
 		for el in line:
-			x, y = line.index(el), grid.index(line)
-			for el in even_n1 if x % 2 == 0 else odd_n1:
-				try: 
-					if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
-						moves.append(1)
-				except IndexError: # not shit code tkt
-					pass
-			if moves == []:
-				print("no more moves")
-				return False
+			if el["status"] == current_player:
+				x, y = line.index(el), grid.index(line)
+				for el in even_n1 if x % 2 == 0 else odd_n1:
+					try: 
+						if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
+							moves.append(1)
+					except IndexError: # not shit code tkt
+						pass
+				for el in even_n2 if x % 2 == 0 else odd_n2:
+					try: 
+						if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
+							moves.append(2)
+					except IndexError: # not shit code tkt
+						pass
+	print(moves)
+	if moves == []:
+		print("no more moves")
+		return False
 	return True
 
 def end_turn(cloneable, jumpable, current_player):
@@ -179,7 +188,7 @@ def end_turn(cloneable, jumpable, current_player):
 	score = get_score()
 	print(f"score: {score}")
 	current_player = abs(current_player - 3)
-	if check_victory(score) != None or moves_left(current_player): #order of these matters as the victory check has to come first if not a winning player may not play the last move and lose
+	if check_victory(score) != None or moves_left(current_player) == False: #order of these matters as the victory check has to come first if not a winning player may not play the last move and lose
 		print("Victory not fully implemented")
 		draw() #displays the last move
 		pygame.display.flip() #pushes update to screen for last move
@@ -190,6 +199,7 @@ def end_turn(cloneable, jumpable, current_player):
 		group.empty()
 		grid, group = create_board()
 		current_player = 1
+	
 	return cloneable, jumpable, current_player
 
 def has_neighbour(x, y):
@@ -224,7 +234,6 @@ def has_valid_path(x, y, visited):
 		return False
 
 
-
 def board_editor():
 	global in_board_editor
 	global in_menu
@@ -237,8 +246,10 @@ def board_editor():
 			sys.exit() # Not including this line crashes the script on Windows. Possibly
 			# on other operating systems too, but I don't know for sure.
 
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_RETURN:
+		if event.type == MOUSEBUTTONDOWN and event.button == 1: 
+			x,y = event.pos
+
+			if menu_rect.collidepoint(x,y):
 				#check that every tile has a valid path to the center tile
 				for line in grid:
 					for el in line:
@@ -256,13 +267,6 @@ def board_editor():
 				in_board_editor = False
 				in_menu = True
 				return
-
-		if event.type == MOUSEBUTTONDOWN and event.button == 1: 
-			x,y = event.pos
-
-			if menu_rect.collidepoint(x,y):
-				in_board_editor = False
-				in_menu = True
 
 			for line in grid:
 				for el in line:		
@@ -294,6 +298,8 @@ def board_editor():
 								return
 							el["status"] = -1
 							el["tile"].update(el)
+
+
 
 def game(cloneable, jumpable, selected_tile, current_player, score):
 	global in_game
@@ -411,6 +417,7 @@ def menu():
 			elif board_rect.collidepoint(x,y):
 				in_menu = False
 				in_board_editor = True
+				
 
 def draw():
 	"""
