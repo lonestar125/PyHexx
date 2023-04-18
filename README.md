@@ -2,14 +2,22 @@
 
 ```
 (in order of importance):
+    
+    board stuff:
+        - reset button in board editor
+        - save edited board in a variable (must be a deep copy (possibly without tile objects as idk what happens with those))
+        - reset edited board to its orginial state when game ends
+    
     display scores in game
+    display winning player for a few seconds before returning to menu
+
     implement menu (this is implemented as logic but ui MUST be improved)
         - title/banner image/idk
         - rules/info screen --> NOT IMPLEMENTED, add game rules + credits (our names/school/idk)
         - board editor
         - game mode --> NOT IMPLEMENTED
         - play
-    keep edited board when game ends
+   
     immplement random move bot
     implement 1 layer bot
     implement MCTS bot
@@ -18,6 +26,7 @@
 ```
 # Ideas for the rapport
 ```
+- make window resizable/scalable
 - further imrpove board editor to be able to load boards and save boards from an external file
 - make a self play neural net similar to alphago zero
 ```
