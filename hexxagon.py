@@ -6,8 +6,8 @@ from pygame.locals import *
 
 # Set up the window, this needs to be outside of the main function because the Tile class needs access to the screen
 # and classes are loaded before everything else in python for some reason
-width, height = 800, 600
 global screen
+width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
 
 class Tile(pygame.sprite.Sprite):
@@ -28,8 +28,7 @@ class Tile(pygame.sprite.Sprite):
 			self.image = pygame.image.load("Sprites/blue.png").convert_alpha()
 		if grid_el["status"] == -1:
 			self.image = pygame.image.load("Sprites/hidden.png").convert_alpha()
-		
-	
+
 
 
 def create_board():
@@ -87,7 +86,7 @@ def create_board():
 		#del grid[el[1]][el[0]]["tile"]
 		
 	return grid, group
-	
+
 
 def check_cloneable(x, y, cloneable):
 	cloneable = []
@@ -225,6 +224,7 @@ def has_valid_path(x, y, visited):
 		return False
 
 
+
 def board_editor():
 	global in_board_editor
 	global in_menu
@@ -294,8 +294,6 @@ def board_editor():
 								return
 							el["status"] = -1
 							el["tile"].update(el)
-
-
 
 def game(cloneable, jumpable, selected_tile, current_player, score):
 	global in_game
@@ -413,7 +411,6 @@ def menu():
 			elif board_rect.collidepoint(x,y):
 				in_menu = False
 				in_board_editor = True
-				
 
 def draw():
 	"""
