@@ -1,5 +1,7 @@
 # Import standard modules.
 import sys
+from time import sleep
+from copy import deepcopy
 # Import non-standard modules.
 import pygame
 from pygame.locals import *
@@ -173,7 +175,7 @@ def moves_left(current_player):
 							moves.append(2)
 					except IndexError: # not shit code tkt
 						pass
-	print(moves)
+
 	if moves == []:
 		print("no more moves")
 		return False
@@ -182,23 +184,31 @@ def moves_left(current_player):
 def end_turn(cloneable, jumpable, current_player):
 	global in_game
 	global in_menu
+	global score
 	clear_outlines()
 	cloneable = []
 	jumpable = []
 	score = get_score()
+
 	print(f"score: {score}")
 	current_player = abs(current_player - 3)
-	if check_victory(score) != None or moves_left(current_player) == False: #order of these matters as the victory check has to come first if not a winning player may not play the last move and lose
-		print("Victory not fully implemented")
+
+	winner = check_victory(score)
+
+	if moves_left(current_player) == False:
+		winner = abs(current_player - 3)
+	
+	if winner == 1:
+		render_text(f"RED WON", 400, 550, color=(189, 60, 32), size=25)
+	elif winner == 2:
+		render_text(f"BLUE WON", 400, 550, color=(80, 138, 169), size=25)
+	
+	if winner != None:
 		draw() #displays the last move
 		pygame.display.flip() #pushes update to screen for last move
+		sleep(3)
 		in_game = False
 		in_menu = True
-		global grid
-		global group
-		group.empty()
-		grid, group = create_board()
-		current_player = 1
 	
 	return cloneable, jumpable, current_player
 
@@ -232,13 +242,38 @@ def has_valid_path(x, y, visited):
 		return True
 	else:
 		return False
+	
+def save_board():
+	# save the edited board to a global variable without its tile objects
+	global saved_board
+	saved_board = []
+	for line in grid:
+		saved_board.append([])
+		for el in line:
+			del el["tile"]
+			saved_board[-1].append(deepcopy(el))
+
+def load_board():
+	# load the saved board
+	global grid
+	global group
+	group.empty()
+	grid = deepcopy(saved_board)
+	for line in grid:
+		for el in line:
+			tile = Tile(el)
+			el["tile"] = tile
+			group.add(tile)
 
 
 def board_editor():
 	global in_board_editor
 	global in_menu
+	global group
+	global grid
 	screen.fill((24, 24, 24))
-	menu_rect = render_text("MENU", 100, 500, color=(241, 232, 205), size=50)
+	menu_rect = render_text("< MENU", 100, 550, color=(241, 232, 205), size=25)
+	reset_rect = render_text("RESET", 400, 550, color=(241, 232, 205), size=25)
 
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -255,17 +290,27 @@ def board_editor():
 					for el in line:
 						if el["status"] != -1:
 							if not has_valid_path(line.index(el), grid.index(line), []):
-								print("invalid board")
+								render_text("INVALID BOARD", 400, 300, color=(189, 60, 32), size=50)
+								pygame.display.update()
+								sleep(1)
 								return
 				
 				#check that both players have at least one tile
 				score = get_score()
 				if score[0] == 0 or score[1] == 0:
-					print("invalid board")
+					render_text("INVALID BOARD", 400, 300, color=(189, 60, 32), size=50)
+					pygame.display.update()
+					sleep(1)
 					return
 				
+				save_board()
 				in_board_editor = False
 				in_menu = True
+				return
+			
+			if reset_rect.collidepoint(x,y):
+				group.empty()
+				grid, group = create_board()
 				return
 
 			for line in grid:
@@ -301,11 +346,17 @@ def board_editor():
 
 
 
-def game(cloneable, jumpable, selected_tile, current_player, score):
+def game(cloneable, jumpable, selected_tile, current_player):
 	global in_game
 	global in_menu
 	screen.fill((24, 24, 24))
-	menu_rect = render_text("MENU", 100, 500, color=(241, 232, 205), size=50)
+	menu_rect = render_text("< MENU", 100, 550, color=(241, 232, 205), size=25)
+	if current_player == 1:
+		render_text(f"RED'S TURN", 700, 50, color=(189, 60, 32), size=25)
+	else:
+		render_text(f"BLUE'S TURN", 700, 50, color=(80, 138, 169), size=25)
+	render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
+	render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
 	# Go through events that are passed to the script by the window.
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -357,7 +408,7 @@ def game(cloneable, jumpable, selected_tile, current_player, score):
 							cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 
 						
-	return cloneable, jumpable, selected_tile, current_player, score
+	return cloneable, jumpable, selected_tile, current_player
 					
 
 def draw_outlines(cloneable, jumpable):
@@ -427,17 +478,19 @@ def draw():
 	global in_board_editor
 	global in_menu
 	group.draw(screen) # draw tile sprites from the Tile class
+		
+
 	
 
  
 def main():
 	pygame.init()
-	#pygame.font.init() #necessary for text rendering
+
 	global group #pygame.sprite.Group object, contains all active tiles
 	global grid
 	global total_tiles
 
-	# neighboring tile deltas [x, y], these are added to a tile to find its neighbors, global because they will not be modified in the rest of the code
+	# neighboring tile deltas [x, y], these are added to a tiles coordinates to find its neighbors, these will not be modified in the program
 	global even_n1
 	global odd_n1
 	even_n1 = [[0, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
@@ -459,6 +512,7 @@ def main():
 	in_info = False
 
 	grid, group = create_board()
+	save_board()
 	while True:
 
 		if in_menu: #MENU
@@ -467,22 +521,23 @@ def main():
 				pygame.display.flip()
 
 		elif in_board_editor: #BOARD EDITOR
+			load_board()
 			while in_board_editor:
 				board_editor()
 				draw()
 				pygame.display.flip()
 
-		elif in_game: #MAIN GAMW LOOPs
+		elif in_game: #MAIN GAMW LOOP
+			load_board()
 			current_player = 1
 			selected_tile = None
+			global score
 			score = get_score()
 			cloneable = []
 			jumpable = []
-			#print("sprites: ", len(group.sprites()))
 			total_tiles = get_total_tiles()
-			#print(total_tiles)
 			while in_game:
-				cloneable, jumpable, selected_tile, current_player, score = game(cloneable, jumpable, selected_tile, current_player, score) 
+				cloneable, jumpable, selected_tile, current_player = game(cloneable, jumpable, selected_tile, current_player) 
 				draw()
 				draw_outlines(cloneable, jumpable)
 				pygame.display.flip()

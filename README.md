@@ -3,19 +3,28 @@
 ```
 (in order of importance):
     
+MOST URGENT:
+- board stuff DONE
+- display scores DONE
+- display winner DONE
+- info screen 
+
+(in order of importance):
+    
     board stuff:
-        - reset button in board editor
+        - display invalid board instead of print DONE
+        - reset button in board editor DONE
         - save edited board in a variable (must be a deep copy (possibly without tile objects as idk what happens with those)) DONE
         - reset edited board to its orginial state when game ends DONE
     
     display scores in game DONE
-    display winning player for a few seconds before returning to menu
+    display winning player for a few seconds before returning to menu DONE
 
     implement menu (this is implemented as logic but ui MUST be improved)
         - title/banner image/idk
         - rules/info screen --> NOT IMPLEMENTED, add game rules + credits (our names/school/idk)
         - board editor
-        - game mode --> NOT IMPLEMENTED
+        - game mode --> NOT IMPLEMENTED, need bots
         - play
    
     immplement random move bot
