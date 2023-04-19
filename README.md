@@ -32,6 +32,7 @@ MOST URGENT:
     implement MCTS bot
  
     Add sfx (maybe)
+        - add mute/unmute button on all screens at the bottom right or something
 ```
 # Ideas for the rapport
 ```
