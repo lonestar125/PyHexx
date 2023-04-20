@@ -7,6 +7,14 @@ MOST URGENT:
 - info screen 
 - MCTS bot
 - docstring
+- write video script 
+
+VIDEO:
+- film individually and join together (not optimal)
+- possible dates ?
+    - this friday (21/04)
+    - next thursday (27/04)
+    - next friday (28/04) (last day to submit) --> this is not optimal as we want to send all the files to jonchery as early as possible (she might not check her mails during the vacation)
 
 (in order of importance):
     
