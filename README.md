@@ -27,7 +27,7 @@ MOST URGENT:
         - game mode --> NOT IMPLEMENTED, need bots
         - play
    
-    immplement random move bot
+    immplement random move bot DONE
     implement 1 layer bot
     implement MCTS bot
  
