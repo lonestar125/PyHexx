@@ -4,10 +4,9 @@
 (in order of importance):
     
 MOST URGENT:
-- board stuff DONE
-- display scores DONE
-- display winner DONE
 - info screen 
+- MCTS bot
+- docstring
 
 (in order of importance):
     
@@ -24,11 +23,11 @@ MOST URGENT:
         - title/banner image/idk
         - rules/info screen --> NOT IMPLEMENTED, add game rules + credits (our names/school/idk)
         - board editor
-        - game mode --> NOT IMPLEMENTED, need bots
+        - game mode DONE, add MCTS bot once done
         - play
    
     immplement random move bot DONE
-    implement 1 layer bot
+    implement 1 layer bot DONE
     implement MCTS bot
  
     Add sfx (maybe)

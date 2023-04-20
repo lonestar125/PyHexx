@@ -158,38 +158,12 @@ def check_victory(score):
 			return 3 #tie
 	return None #no current winner
 
-
-
-def moves_left(current_player):
+def avaiable_moves(current_player):
+	#returns all available moves for a certain player
 	moves = []
 	for line in grid:
 		for el in line:
 			if el["status"] == current_player:
-				x, y = line.index(el), grid.index(line)
-				for el in even_n1 if x % 2 == 0 else odd_n1:
-					try: 
-						if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
-							moves.append(1)
-					except IndexError: # not shit code tkt
-						pass
-				for el in even_n2 if x % 2 == 0 else odd_n2:
-					try: 
-						if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
-							moves.append(2)
-					except IndexError: # not shit code tkt
-						pass
-
-	if moves == []:
-		print("no more moves")
-		return False
-	return True
-
-def random_move():
-	#returns a random possible move for the current player chosen from every possible move this player has available
-	moves = []
-	for line in grid:
-		for el in line:
-			if el["status"] == 2:
 				x, y = line.index(el), grid.index(line)
 				for el in even_n1 if x % 2 == 0 else odd_n1:
 					try: 
@@ -203,10 +177,44 @@ def random_move():
 							moves.append([2, x, y, x + el[0], y + el[1]]) #2 = jump, x, y coords of selected tile,  x + el[0], y + el[1] coords of jumped to tile
 					except IndexError: # not shit code tkt
 						pass
+	return moves
+
+def moves_left(current_player):
+	#checks if a player has any moves left to play
+	moves = avaiable_moves(current_player)
+	if moves == []:
+		print("no more moves")
+		return False
+	return True
+
+def random_move(current_player):
+	#returns a random possible move for the current player chosen from every possible move this player has available
+	moves = avaiable_moves(current_player)
 	if moves != []:
 		return random.choice(moves)
-	else:
-		return "out of moves"
+	return None
+
+def one_layer_best_move(current_player):
+	#unsorted_list.sort(key=lambda x: int(x[3]))
+	moves = avaiable_moves(current_player)
+	for move in moves:
+		score = 0
+		if move[0] == 1:
+			score += 1
+
+		for el in even_n1 if move[3] % 2 == 0 else odd_n1:
+			try: 
+				if grid[move[4] + el[1]][move[3] + el[0]]["status"] == abs(current_player - 3) and (0 <= (move[4] + el[1]) <= 8) and (0 <= (move[3] + el[0]) <= 8):
+					score += 1
+			except IndexError: # not shit code tkt
+				pass
+		move.append(score)
+	moves.sort(key=lambda x: int(x[5]), reverse=True)
+	print(moves)
+	best_moves = [el for el in moves if el == moves[0]]
+	return random.choice(best_moves)
+		
+
 
 def end_turn(cloneable, jumpable, current_player):
 	global in_game
@@ -215,20 +223,24 @@ def end_turn(cloneable, jumpable, current_player):
 	clear_outlines()
 	cloneable = []
 	jumpable = []
-	score = get_score()
-
-	print(f"score: {score}")
-	current_player = abs(current_player - 3)
-
-	winner = check_victory(score)
-
-	if moves_left(current_player) == False:
-		winner = abs(current_player - 3)
+	opponent = abs(current_player - 3)
+	#if the opponent has no more moves left, fill in all tiles with current_player
+	if moves_left(opponent) == False:
+		print("got here")
+		for line in grid:
+			for el in line:
+				if el['status'] == 0:
+					el['status'] = current_player
+					el["tile"].update(el)
 	
+	score = get_score()
+	print(f"score: {score}")
+	winner = check_victory(score)
 	if winner == 1:
 		render_text(f"RED WON", 400, 550, color=(189, 60, 32), size=25)
 	elif winner == 2:
 		render_text(f"BLUE WON", 400, 550, color=(80, 138, 169), size=25)
+	current_player = abs(current_player - 3)
 	
 	if winner != None:
 		draw() #displays the last move
@@ -292,6 +304,17 @@ def load_board():
 			el["tile"] = tile
 			group.add(tile)
 
+def bot_move(move): # move = [move_type, x1, y1, x2, y2]
+	if move[0] == 1:
+		grid[move[4]][move[3]]["status"] = 2
+		grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
+		update_neighbours(move[3], move[4], 2)
+	elif move[0] == 2:
+		grid[move[2]][move[1]]["status"] = 0
+		grid[move[2]][move[1]]["tile"].update(grid[move[2]][move[1]])
+		grid[move[4]][move[3]]["status"] = 2
+		grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
+		update_neighbours(move[3], move[4], 2)
 
 def board_editor():
 	global in_board_editor
@@ -432,17 +455,15 @@ def game(cloneable, jumpable, selected_tile, current_player):
 									return cloneable, jumpable, selected_tile, current_player
 
 	if game_mode == 2 and current_player == 2:
-		move = random_move()
-		if move[0] == 1:
-			grid[move[4]][move[3]]["status"] = 2
-			grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
-			update_neighbours(move[3], move[4], 2)
-		elif move[0] == 2:
-			grid[move[2]][move[1]]["status"] = 0
-			grid[move[2]][move[1]]["tile"].update(grid[move[2]][move[1]])
-			grid[move[4]][move[3]]["status"] = 2
-			grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
-			update_neighbours(move[3], move[4], 2)
+		sleep(0.5)
+		move = random_move(current_player)
+		bot_move(move)
+		cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
+	
+	elif game_mode == 3 and current_player == 2:
+		sleep(0.5)
+		move = one_layer_best_move(current_player)
+		bot_move(move)
 		cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 
 						
@@ -484,12 +505,22 @@ def menu():
 	global in_game
 	global in_info
 	global in_menu
+	global game_mode
 
 	screen.fill((24, 24, 24))
 	render_text("HEXXAGON", 400, 100, color=(241, 232, 205), size=50)
-	info_rect = render_text("INFO", 400, 300, color=(241, 232, 205), size=50)
-	board_rect = render_text("BOARD EDITOR", 400, 400, color=(241, 232, 205), size=50)
-	play_rect = render_text("PLAY", 400, 500, color=(241, 232, 205), size=50)
+	info_rect = render_text("INFO", 400, 250, color=(241, 232, 205), size=25)
+	board_rect = render_text("BOARD EDITOR", 400, 300, color=(241, 232, 205), size=25)
+	if game_mode == 1:
+		game_mode_rect = render_text("GAME MODE (player)", 400, 350, color=(241, 232, 205), size=25)
+	elif game_mode == 2:
+		game_mode_rect = render_text("GAME MODE (random)", 400, 350, color=(241, 232, 205), size=25)
+	elif game_mode == 3:
+		game_mode_rect = render_text("GAME MODE (normal)", 400, 350, color=(241, 232, 205), size=25)
+	elif game_mode == 4:
+		game_mode_rect = render_text("GAME MODE (hard)", 400, 350, color=(241, 232, 205), size=25)
+
+	play_rect = render_text("PLAY", 400, 400, color=(241, 232, 205), size=25)
 
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -506,7 +537,11 @@ def menu():
 			elif board_rect.collidepoint(x,y):
 				in_menu = False
 				in_board_editor = True
-				
+			elif game_mode_rect.collidepoint(x,y):
+				if game_mode == 3:
+					game_mode = 1
+				else:
+					game_mode += 1
 
 def draw():
 	"""
@@ -521,7 +556,6 @@ def draw():
 		render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
 			
 
-	
 
 def main():
 	pygame.init()
@@ -553,7 +587,8 @@ def main():
 
 	global game_mode
 	# 1 = 2 players, 2 = random bot, 3 = best move bot, 4 = MCTS bot
-	game_mode = 2
+	game_mode = 1
+	print(game_mode)
 
 	grid, group = create_board()
 	save_board()
