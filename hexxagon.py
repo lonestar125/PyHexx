@@ -2,6 +2,7 @@
 import sys
 from time import sleep
 from copy import deepcopy
+import random
 # Import non-standard modules.
 import pygame
 from pygame.locals import *
@@ -157,6 +158,8 @@ def check_victory(score):
 			return 3 #tie
 	return None #no current winner
 
+
+
 def moves_left(current_player):
 	moves = []
 	for line in grid:
@@ -180,6 +183,30 @@ def moves_left(current_player):
 		print("no more moves")
 		return False
 	return True
+
+def random_move():
+	#returns a random possible move for the current player chosen from every possible move this player has available
+	moves = []
+	for line in grid:
+		for el in line:
+			if el["status"] == 2:
+				x, y = line.index(el), grid.index(line)
+				for el in even_n1 if x % 2 == 0 else odd_n1:
+					try: 
+						if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
+							moves.append([1, x, y, x + el[0], y + el[1]]) #1 = clone, x, y coords of selected tile,  x + el[0], y + el[1] coords of cloned to tile
+					except IndexError: # not shit code tkt
+						pass
+				for el in even_n2 if x % 2 == 0 else odd_n2:
+					try: 
+						if grid[y + el[1]][x + el[0]]["status"] == 0 and (0 <= (y + el[1]) <= 8) and (0 <= (x + el[0]) <= 8):
+							moves.append([2, x, y, x + el[0], y + el[1]]) #2 = jump, x, y coords of selected tile,  x + el[0], y + el[1] coords of jumped to tile
+					except IndexError: # not shit code tkt
+						pass
+	if moves != []:
+		return random.choice(moves)
+	else:
+		return "out of moves"
 
 def end_turn(cloneable, jumpable, current_player):
 	global in_game
@@ -344,8 +371,6 @@ def board_editor():
 							el["status"] = -1
 							el["tile"].update(el)
 
-
-
 def game(cloneable, jumpable, selected_tile, current_player):
 	global in_game
 	global in_menu
@@ -355,8 +380,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 		render_text(f"RED'S TURN", 700, 50, color=(189, 60, 32), size=25)
 	else:
 		render_text(f"BLUE'S TURN", 700, 50, color=(80, 138, 169), size=25)
-	render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
-	render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
+	
 	# Go through events that are passed to the script by the window.
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -364,48 +388,62 @@ def game(cloneable, jumpable, selected_tile, current_player):
 			sys.exit() # Not including this line crashes the script on Windows. Possibly
 			# on other operating systems too, but I don't know for sure.
 	# Handle other events
+		if game_mode == 1 or (game_mode != 1 and current_player == 1):
+			if event.type == MOUSEBUTTONDOWN and event.button == 1: 
 
-		if event.type == MOUSEBUTTONDOWN and event.button == 1: 
+				x,y = event.pos
+				if menu_rect.collidepoint(x,y):
+					in_game = False
+					in_menu = True
 
-			x,y = event.pos
+				for line in grid:
+					for el in line:
+						# if the game is in single player mode, or if it's the player's turn in 
+							# if one of current_player's tiles was clicked, highlight possible moves
+							if el["status"] == current_player:
+								pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y # position of mouse in image mask
+								if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): # checks that the position of the mouse when clicked is in the rect and the mask of the image
+									clear_outlines()
+									cloneable = check_cloneable(line.index(el), grid.index(line), cloneable)
+									jumpable = check_jumpable(line.index(el), grid.index(line), jumpable)
+									#print(f"x: {line.index(el)}, y: {grid.index(line)}")
+									selected_tile = el
 
-			if menu_rect.collidepoint(x,y):
-				in_game = False
-				in_menu = True
+								
+							# if one of the currently highlighted tiles was clicked, do stuff
+							elif el["outline"] == 1:
+								pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y
+								if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): 
+									el["status"] = current_player
+									el["tile"].update(el)
+									update_neighbours(line.index(el), grid.index(line), current_player)
+									cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
+									return cloneable, jumpable, selected_tile, current_player
+							
+							elif el["outline"] == 2:
+								pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y
+								if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): 
+									el["status"] = current_player
+									el["tile"].update(el)
+									selected_tile["status"] = 0
+									selected_tile["tile"].update(selected_tile)
+									update_neighbours(line.index(el), grid.index(line), current_player)
+									cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
+									return cloneable, jumpable, selected_tile, current_player
 
-			for line in grid:
-				for el in line:
-
-					# if one of current_player's tiles was clicked, highlight possible moves
-					if el["status"] == current_player:
-						pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y # position of mouse in image mask
-						if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): # checks that the position of the mouse when clicked is in the rect and the mask of the image
-							clear_outlines()
-							cloneable = check_cloneable(line.index(el), grid.index(line), cloneable)
-							jumpable = check_jumpable(line.index(el), grid.index(line), jumpable)
-							#print(f"x: {line.index(el)}, y: {grid.index(line)}")
-							selected_tile = el
-
-						
-					# if one of the currently highlighted tiles was clicked, do stuff
-					elif el["outline"] == 1:
-						pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y
-						if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): 
-							el["status"] = current_player
-							el["tile"].update(el)
-							update_neighbours(line.index(el), grid.index(line), current_player)
-							cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
-
-					
-					elif el["outline"] == 2:
-						pos_in_mask = x - el["tile"].rect.x, y - el["tile"].rect.y
-						if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): 
-							el["status"] = current_player
-							el["tile"].update(el)
-							selected_tile["status"] = 0
-							selected_tile["tile"].update(selected_tile)
-							update_neighbours(line.index(el), grid.index(line), current_player)
-							cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
+	if game_mode == 2 and current_player == 2:
+		move = random_move()
+		if move[0] == 1:
+			grid[move[4]][move[3]]["status"] = 2
+			grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
+			update_neighbours(move[3], move[4], 2)
+		elif move[0] == 2:
+			grid[move[2]][move[1]]["status"] = 0
+			grid[move[2]][move[1]]["tile"].update(grid[move[2]][move[1]])
+			grid[move[4]][move[3]]["status"] = 2
+			grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
+			update_neighbours(move[3], move[4], 2)
+		cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 
 						
 	return cloneable, jumpable, selected_tile, current_player
@@ -478,11 +516,13 @@ def draw():
 	global in_board_editor
 	global in_menu
 	group.draw(screen) # draw tile sprites from the Tile class
-		
+	if in_game:
+		render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
+		render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
+			
 
 	
 
- 
 def main():
 	pygame.init()
 
@@ -510,6 +550,10 @@ def main():
 	in_board_editor = False
 	in_game = False
 	in_info = False
+
+	global game_mode
+	# 1 = 2 players, 2 = random bot, 3 = best move bot, 4 = MCTS bot
+	game_mode = 2
 
 	grid, group = create_board()
 	save_board()
