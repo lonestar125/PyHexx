@@ -13,9 +13,6 @@ global odd_n2
 even_n2 = [[0, -2], [-1, -1], [1, -1], [-2, -1], [2, -1], [-2, 0], [2, 0], [-2, 1], [-1, 2], [0, 2], [1, 2], [2, 1]]
 odd_n2 = [[0, 2], [-1, 1], [1, 1], [-2, 1], [2, 1], [-2, 0], [2, 0], [-2, -1], [-1, -2], [0, -2], [1, -2], [2, -1]]
 
-global total_tiles
-total_tiles = 58 # unsure if this is correct
-
 class Node:
 	"""
 	A node in the game tree.
