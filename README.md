@@ -5,8 +5,8 @@
     
 MOST URGENT:
 - info screen 
-- MCTS bot
-- docstring
+- MCTS bot DONE
+- docstring DONE
 - write video script 
 
 VIDEO:
@@ -46,6 +46,9 @@ VIDEO:
 - make window resizable/scalable
 - further imrpove board editor to be able to load boards and save boards from an external file
 - make a self play neural net similar to alphago zero
+- improve UI
+- add sfx
+- add animations
 ```
 
     
