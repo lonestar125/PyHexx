@@ -42,6 +42,12 @@ OR
  
     Add sfx (maybe)
         - add mute/unmute button on all screens at the bottom right or something
+    - End game (win)
+    - Move / Clone
+    - Conquer
+    - Main menu music
+    - Button click
+
 ```
 # Ideas for the rapport
 ```
