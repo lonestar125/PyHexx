@@ -371,7 +371,7 @@ def load_board():
 			el["tile"] = tile
 			group.add(tile)
 
-def bot_move(move): # 
+def bot_move(move):
 	"""
 	list --> None
 	Given a move (move = [move_type, x1, y1, x2, y2]), the function will update the grid and the neighbours
@@ -701,8 +701,12 @@ def main():
 	None --> None
 	Initialise important variables and triggers the launch of the menu screen
 	"""
+	icon = pygame.image.load("Sprites/red.png")
+	
 	pygame.init()
-
+	pygame.display.set_caption("Hexxagon")
+	pygame.display.set_icon(icon)
+	
 	global group #pygame.sprite.Group object, contains all active tiles
 	global grid
 	global total_tiles
