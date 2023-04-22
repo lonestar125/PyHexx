@@ -1,11 +1,11 @@
 # Import standard modules.
 import sys
+import random
 from time import sleep
 from copy import deepcopy
-import random
+# Import non-standard modules.
 import mcts_bot
 import layer_bot
-# Import non-standard modules.
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # removes the pygame welcome message
 import pygame
@@ -46,8 +46,7 @@ class Tile(pygame.sprite.Sprite):
 			self.image = pygame.image.load("Sprites/blue.png").convert_alpha()
 		if grid_el["status"] == -1:
 			self.image = pygame.image.load("Sprites/hidden.png").convert_alpha()
-		
-	
+
 
 
 def create_board():
@@ -105,6 +104,7 @@ def create_board():
 	return grid, group
 
 
+
 def check_cloneable(x, y, cloneable):
 	"""
 	int, int, list --> list
@@ -159,6 +159,8 @@ def clear_outlines():
 		for el in line:
 			el["outline"] = 0
 
+
+
 def get_score():
 	"""
 	None --> list[int, int]
@@ -199,6 +201,8 @@ def check_victory(score):
 		elif score[1] == score[0]: # score[0] == score[1]
 			return 3 #tie
 	return None #no current winner
+
+
 
 def available_moves(current_player):
 	"""
@@ -274,6 +278,24 @@ def one_layer_best_move(current_player):
 	best_moves = [el for el in moves if el == moves[0]]
 	return random.choice(best_moves)
 
+def bot_move(move):
+	"""
+	list --> None
+	Given a move (move = [move_type, x1, y1, x2, y2]), the function will update the grid and the neighbours
+	Is used to carry out a bot's move
+	"""
+	if move[0] == 1:
+		grid[move[4]][move[3]]["status"] = 2
+		grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
+		update_neighbours(move[3], move[4], 2)
+	elif move[0] == 2:
+		grid[move[2]][move[1]]["status"] = 0
+		grid[move[2]][move[1]]["tile"].update(grid[move[2]][move[1]])
+		grid[move[4]][move[3]]["status"] = 2
+		grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
+		update_neighbours(move[3], move[4], 2)
+
+
 
 def end_turn(cloneable, jumpable, current_player):
 	"""
@@ -318,7 +340,6 @@ def end_turn(cloneable, jumpable, current_player):
 	
 	return cloneable, jumpable, current_player
 
-
 def has_valid_path(x, y, visited):
 	"""
 	int, int, list --> bool
@@ -339,7 +360,9 @@ def has_valid_path(x, y, visited):
 		return True
 	else:
 		return False
-	
+
+
+
 def save_board():
 	"""
 	None --> None
@@ -370,23 +393,6 @@ def load_board():
 			tile = Tile(el)
 			el["tile"] = tile
 			group.add(tile)
-
-def bot_move(move):
-	"""
-	list --> None
-	Given a move (move = [move_type, x1, y1, x2, y2]), the function will update the grid and the neighbours
-	Is used to carry out a bot's move
-	"""
-	if move[0] == 1:
-		grid[move[4]][move[3]]["status"] = 2
-		grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
-		update_neighbours(move[3], move[4], 2)
-	elif move[0] == 2:
-		grid[move[2]][move[1]]["status"] = 0
-		grid[move[2]][move[1]]["tile"].update(grid[move[2]][move[1]])
-		grid[move[4]][move[3]]["status"] = 2
-		grid[move[4]][move[3]]["tile"].update(grid[move[4]][move[3]])
-		update_neighbours(move[3], move[4], 2)
 
 def board_editor():
 	"""
@@ -560,6 +566,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 	return cloneable, jumpable, selected_tile, current_player
 					
 
+
 def draw_outlines(cloneable, jumpable):
 	"""
 	list, list --> None
@@ -578,6 +585,18 @@ def draw_outlines(cloneable, jumpable):
 		img.x = el["x"]
 		img.y = el["y"] - 1
 		screen.blit(img_i, (img.x, img.y))
+
+def draw():
+	"""
+	Render all the tiles and the score
+	"""
+	global in_game
+	global in_board_editor
+	global in_menu
+	group.draw(screen) # draw tile sprites from the Tile class
+	if in_game:
+		render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
+		render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
 
 def render_text(text, x, y, color=(0, 0, 0), size=32, border=False):
 	'''
@@ -684,17 +703,7 @@ def info():
 				in_info = False
 				in_menu = True
 
-def draw():
-	"""
-	Render all the tiles and the score
-	"""
-	global in_game
-	global in_board_editor
-	global in_menu
-	group.draw(screen) # draw tile sprites from the Tile class
-	if in_game:
-		render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
-		render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
+
 
 def main():
 	"""
