@@ -4,7 +4,7 @@
 (in order of importance):
     
 MOST URGENT:
-- info screen 
+- info screen DONE
 - MCTS bot DONE
 - docstring DONE
 - write video script 
@@ -15,6 +15,8 @@ VIDEO:
     - this friday (21/04)
     - next thursday (27/04)
     - next friday (28/04) (last day to submit) --> this is not optimal as we want to send all the files to jonchery as early as possible (she might not check her mails during the vacation)
+OR
+- film and stich it up in a imovie or some shit
 
 (in order of importance):
     

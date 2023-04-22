@@ -103,7 +103,7 @@ def create_board():
 		grid[el[1]][el[0]]["tile"].update(grid[el[1]][el[0]])
 		
 	return grid, group
-	
+
 
 def check_cloneable(x, y, cloneable):
 	"""
@@ -643,6 +643,47 @@ def menu():
 				else:
 					game_mode += 1
 
+def info():
+	"""
+	None --> None
+	Renders the info screen
+	"""
+	
+	global in_info
+	global in_menu
+
+	screen.fill((24, 24, 24))
+	menu_rect = render_text("< MENU", 700, 550, color=(201, 166, 131), size=25)
+
+	render_text("Instructions", 400, 100, color=(201, 166, 131), size=50)
+	render_text("GAMEPLAY", 100, 150, color=(158, 107, 58), size=20)
+	render_text("Hexxagon is a strategy game board where the goal is to cover as many spaces of the board ", 350, 175, color=(241, 232, 205), size=15) # +15 pixels per line
+	render_text("with your color as possible. This is done by cloning, jumping, and converting your opponents tiles.", 376, 190, color=(241, 232, 205), size=15) # +40 per paragraph
+	render_text("MOUVEMENT", 113, 230, color=(158, 107, 58), size=20) # +25 per title and paragraph
+	render_text("When it is your turn to move, simply select the tile that you wish to move by clicking on it.", 344, 255, color=(241, 232, 205), size=15)
+	render_text("This will let you move one space in any direction or jump two spaces in any direction (as long ", 358, 270, color=(241, 232, 205), size=15)
+	render_text("as that cell is empty). A player must make a move if one is available. Once a piece is ", 327, 285, color=(241, 232, 205), size=15)
+	render_text("selected, you may choose from different options:", 200, 300, color=(241, 232, 205), size=15)
+	render_text(" - If you move 1 space, you clone the piece", 225, 325, color=(241, 232, 205), size=15)
+	render_text(" - If you jump 2 spaces, you move the piece", 227, 340, color=(241, 232, 205), size=15)
+	render_text("CAPTURING PIECES", 146, 375, color=(158, 107, 58), size=20)
+	render_text("After a player captures an empty space, any opponent pieces that are adjacent to that new", 352, 400, color=(241, 232, 205), size=15)
+	render_text("location will also be captured (converted to your color).", 225, 415, color=(241, 232, 205), size=15)
+	render_text("WINNING", 90, 455, color=(158, 107, 58), size=20)
+	render_text("The game ends when there are no empty spaces or one player cannot move. If a player ", 340, 480, color=(241, 232, 205), size=15)
+	render_text("cannot move, the remaining empty spaces are captured by the other player and the game ", 348, 495, color=(241, 232, 205), size=15)
+	render_text("ends. The player with the majority of tiles on the board wins: 1 tile = 1 point", 300, 510, color=(241, 232, 205), size=15)
+
+	for event in pygame.event.get():
+		if event.type == QUIT:
+			pygame.quit() # Opposite of pygame.init
+			sys.exit() # Not including this line crashes the script on Windows. Possibly
+		if event.type == MOUSEBUTTONDOWN and event.button == 1: 
+			x,y = event.pos
+			if menu_rect.collidepoint(x,y):
+				in_info = False
+				in_menu = True
+
 def draw():
 	"""
 	Render all the tiles and the score
@@ -725,9 +766,10 @@ def main():
 
 		elif in_info: #INFO SCREEN --> game rules, credits, NOT IMPLEMENTED, crashes the game currently
 			while in_info:
-				#info()
+				info()
 				pygame.display.flip()
 				pass
+
 
 if __name__ == "__main__":
 	main()
