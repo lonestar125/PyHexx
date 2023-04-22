@@ -10,6 +10,7 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # removes the pygame welcome message
 import pygame
 from pygame.locals import *
+from pygame import mixer
 
 # Set up the window, this needs to be outside of the main function because the Tile class needs access to the screen
 # and classes are loaded before everything else in python.
@@ -530,6 +531,8 @@ def game(cloneable, jumpable, selected_tile, current_player):
 								if el["tile"].rect.collidepoint(x,y) and el["tile"].mask.get_at(pos_in_mask): 
 									el["status"] = current_player
 									el["tile"].update(el)
+									capture_sound = mixer.Sound('Sounds/capture.mp3')
+									capture_sound.play()
 									update_neighbours(line.index(el), grid.index(line), current_player)
 									cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 									return cloneable, jumpable, selected_tile, current_player
@@ -541,6 +544,8 @@ def game(cloneable, jumpable, selected_tile, current_player):
 									el["tile"].update(el)
 									selected_tile["status"] = 0
 									selected_tile["tile"].update(selected_tile)
+									mouve_sound = mixer.Sound('Sounds/move-self.mp3')
+									mouve_sound.play()
 									update_neighbours(line.index(el), grid.index(line), current_player)
 									cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
 									return cloneable, jumpable, selected_tile, current_player
@@ -744,24 +749,34 @@ def main():
 	global game_mode
 	# 1 = 2 players, 2 = random bot, 3 = best move bot, 4 = MCTS bot
 	game_mode = 1
-
+	
+	mixer.music.load('Sounds/FNAF.mp3')
+	mixer.music.play(-1)
+	mixer.music.pause()
+	
 	grid, group = create_board()
 	save_board()
+	
 	while True:
 
 		if in_menu: #MENU
+			mixer.music.unpause()
+			
 			while in_menu:
 				menu()
 				pygame.display.flip()
 
 		elif in_board_editor: #BOARD EDITOR
+			mixer.music.pause()
 			load_board()
+			
 			while in_board_editor:
 				board_editor()
 				draw()
 				pygame.display.flip()
 
 		elif in_game: #MAIN GAMW LOOP
+			mixer.music.pause()
 			load_board()
 			current_player = 1
 			selected_tile = None
@@ -778,6 +793,8 @@ def main():
 				pygame.display.flip()
 
 		elif in_info: #INFO SCREEN --> game rules, credits, NOT IMPLEMENTED, crashes the game currently
+			mixer.music.pause()
+			
 			while in_info:
 				info()
 				pygame.display.flip()
