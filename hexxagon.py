@@ -659,7 +659,7 @@ def info():
 	render_text("GAMEPLAY", 100, 150, color=(158, 107, 58), size=20)
 	render_text("Hexxagon is a strategy game board where the goal is to cover as many spaces of the board ", 350, 175, color=(241, 232, 205), size=15) # +15 pixels per line
 	render_text("with your color as possible. This is done by cloning, jumping, and converting your opponents tiles.", 376, 190, color=(241, 232, 205), size=15) # +40 per paragraph
-	render_text("MOUVEMENT", 113, 230, color=(158, 107, 58), size=20) # +25 per title and paragraph
+	render_text("MOVEMENT", 107, 230, color=(158, 107, 58), size=20) # +25 per title and paragraph
 	render_text("When it is your turn to move, simply select the tile that you wish to move by clicking on it.", 344, 255, color=(241, 232, 205), size=15)
 	render_text("This will let you move one space in any direction or jump two spaces in any direction (as long ", 358, 270, color=(241, 232, 205), size=15)
 	render_text("as that cell is empty). A player must make a move if one is available. Once a piece is ", 327, 285, color=(241, 232, 205), size=15)
