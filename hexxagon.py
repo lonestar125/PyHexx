@@ -356,16 +356,22 @@ def end_turn(cloneable, jumpable, current_player):
 	winner = check_victory(score)
 	if winner == 1:
 		render_text(f"RED WON", 400, 550, color=(189, 60, 32), size=25)
+		victory_sound = mixer.Sound('Sounds/victory.wav')
+		victory_sound.play()
 	elif winner == 2:
 		render_text(f"BLUE WON", 400, 550, color=(80, 138, 169), size=25)
+		victory_sound = mixer.Sound('Sounds/victory.wav')
+		victory_sound.play()
 	elif winner == 3:
 		render_text(f"TIE", 400, 550, color=(241, 232, 205), size=25)
+		victory_sound = mixer.Sound('Sounds/victory.wav')
+		victory_sound.play()
 	current_player = abs(current_player - 3)
 	
 	if winner != None:
 		draw() #displays the last move
 		pygame.display.flip() #pushes update to screen to display last move
-		sleep(3)
+		sleep(4)
 		in_game = False
 		in_menu = True
 	
@@ -471,12 +477,21 @@ def board_editor():
 				
 				save_board()
 				in_board_editor = False
+				
+				menu_sound = mixer.Sound('Sounds/menu_leave.mp3')
+				menu_sound.set_volume(0.5)
+				menu_sound.play()
+				
 				in_menu = True
 				return
 			
 			if reset_rect.collidepoint(x,y):
 				group.empty()
+				
 				grid, group = create_board()
+				reset_sound = mixer.Sound('Sounds/reset.wav')
+				reset_sound.play()
+				
 				return
 
 			for line in grid:
@@ -519,6 +534,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 	"""
 	global in_game
 	global in_menu
+	
 	screen.fill((24, 24, 24))
 	menu_rect = render_text("< MENU", 100, 550, color=(241, 232, 205), size=25)
 	if game_mode == 1:
@@ -540,6 +556,11 @@ def game(cloneable, jumpable, selected_tile, current_player):
 				x,y = event.pos
 				if menu_rect.collidepoint(x,y):
 					in_game = False
+					
+					menu_sound = mixer.Sound('Sounds/menu_leave.mp3')
+					menu_sound.set_volume(0.5)
+					menu_sound.play()
+					
 					in_menu = True
 
 				for line in grid:
@@ -741,6 +762,11 @@ def info():
 			x,y = event.pos
 			if menu_rect.collidepoint(x,y):
 				in_info = False
+				
+				menu_sound = mixer.Sound('Sounds/menu_leave.mp3')
+				menu_sound.set_volume(0.5)
+				menu_sound.play()
+
 				in_menu = True
 
 
@@ -756,8 +782,9 @@ def main():
 	pygame.display.set_caption("Hexxagon")
 	pygame.display.set_icon(icon)
 	
-	global groupV
+	global groupV # Volume button group
 	global volume_button
+	
 	global group #pygame.sprite.Group object, contains all active tiles
 	global grid
 	global total_tiles
@@ -788,11 +815,12 @@ def main():
 	game_mode = 1
 	
 	# Music
-	mixer.music.load('Sounds/FNAF.mp3')
+	mixer.music.load('Sounds/menu_music.mp3')
 	mixer.music.play(-1)
+	mixer.music.set_volume(0.5)
 	mixer.music.pause()
 
-	# Volume
+	# Volume button
 	groupV = pygame.sprite.RenderPlain()
 	volume_button = Volume()  
 	groupV.add(volume_button)
@@ -802,7 +830,7 @@ def main():
 	save_board()
 	
 	while True:
-
+		
 		if in_menu: #MENU
 			mixer.music.unpause()
 			
@@ -812,16 +840,21 @@ def main():
 				pygame.display.flip()
 
 		elif in_board_editor: #BOARD EDITOR
-			mixer.music.pause()
+			# mixer.music.pause()
 			load_board()
-			
+
 			while in_board_editor:
 				board_editor()
 				draw()
 				pygame.display.flip()
 
 		elif in_game: #MAIN GAMW LOOP
-			mixer.music.pause()
+			
+			# mixer.music.pause()
+			play_sound = mixer.Sound('Sounds/game_init.mp3')
+			play_sound.set_volume(0.5)
+			play_sound.play()
+			
 			load_board()
 			current_player = 1
 			selected_tile = None
@@ -838,12 +871,12 @@ def main():
 				pygame.display.flip()
 
 		elif in_info: #INFO SCREEN --> game rules, credits, NOT IMPLEMENTED, crashes the game currently
-			mixer.music.pause()
+			# mixer.music.pause()
 			
 			while in_info:
 				info()
 				pygame.display.flip()
-				pass
+
 
 
 if __name__ == "__main__":
