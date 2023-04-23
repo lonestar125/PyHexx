@@ -48,6 +48,36 @@ class Tile(pygame.sprite.Sprite):
 		if grid_el["status"] == -1:
 			self.image = pygame.image.load("Sprites/hidden.png").convert_alpha()
 
+class Volume(pygame.sprite.Sprite):
+	"""
+	A class to represent a mute button.
+	"""
+	def __init__(self):
+		"""
+		int, int --> None
+		Initialise the mute button.
+		"""
+		super(Volume, self).__init__()
+		self.images = [pygame.image.load("Sprites/mute.png").convert_alpha(),
+					   pygame.image.load("Sprites/unmute.png").convert_alpha()]
+		self.image_index = 1
+		self.image = self.images[self.image_index]
+		self.rect = self.image.get_rect()
+		self.rect.x, self.rect.y = 700, 500
+		self.mask = pygame.mask.from_surface(self.image)
+
+	def Vupdate(self):
+		"""
+		None --> None
+		Update the mute button with the corresponding image based on its status
+		"""
+		self.image_index = 1 - self.image_index
+		self.image = self.images[self.image_index]
+		if self.image_index == 1:
+			mixer.music.play()
+		if self.image_index == 0:
+			mixer.music.stop()
+
 
 
 def create_board():
@@ -622,14 +652,16 @@ def menu():
 	None --> None
 	Renders the menu screen
 	"""
-
 	global in_board_editor
 	global in_game
 	global in_info
 	global in_menu
 	global game_mode
+	global groupV
+	global volume_button
 
 	screen.fill((24, 24, 24))
+
 	render_text("HEXXAGON", 400, 100, color=(241, 232, 205), size=50)
 	info_rect = render_text("INFO", 400, 250, color=(241, 232, 205), size=25)
 	board_rect = render_text("BOARD EDITOR", 400, 300, color=(241, 232, 205), size=25)
@@ -645,13 +677,15 @@ def menu():
 		game_mode_rect = render_text("GAME MODE (mcts)", 400, 350, color=(241, 232, 205), size=25)
 
 	play_rect = render_text("PLAY", 400, 400, color=(241, 232, 205), size=25)
-
+	
 	for event in pygame.event.get():
 		if event.type == QUIT:
 			pygame.quit() # Opposite of pygame.init
 			sys.exit()
 		if event.type == MOUSEBUTTONDOWN and event.button == 1:
 			x,y = event.pos
+			if volume_button.rect.collidepoint(x,y):
+				volume_button.Vupdate()
 			if play_rect.collidepoint(x,y):
 				in_menu = False
 				in_game = True
@@ -666,6 +700,7 @@ def menu():
 					game_mode = 1
 				else:
 					game_mode += 1
+
 
 def info():
 	"""
@@ -721,6 +756,8 @@ def main():
 	pygame.display.set_caption("Hexxagon")
 	pygame.display.set_icon(icon)
 	
+	global groupV
+	global volume_button
 	global group #pygame.sprite.Group object, contains all active tiles
 	global grid
 	global total_tiles
@@ -750,10 +787,17 @@ def main():
 	# 1 = 2 players, 2 = random bot, 3 = best move bot, 4 = MCTS bot
 	game_mode = 1
 	
+	# Music
 	mixer.music.load('Sounds/FNAF.mp3')
 	mixer.music.play(-1)
 	mixer.music.pause()
-	
+
+	# Volume
+	groupV = pygame.sprite.RenderPlain()
+	volume_button = Volume()  
+	groupV.add(volume_button)
+
+
 	grid, group = create_board()
 	save_board()
 	
@@ -764,6 +808,7 @@ def main():
 			
 			while in_menu:
 				menu()
+				groupV.draw(screen)
 				pygame.display.flip()
 
 		elif in_board_editor: #BOARD EDITOR
