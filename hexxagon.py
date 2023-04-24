@@ -683,21 +683,21 @@ def menu():
 
 	screen.fill((44, 34, 46))
 
-	render_text("HEXXAGON", 400, 100, color=(171, 148, 122), size=50)
-	info_rect = render_text("INFO", 400, 250, color=(171, 148, 122), size=25)
-	board_rect = render_text("BOARD EDITOR", 400, 300, color=(171, 148, 122), size=25)
+	render_text("HEXXAGON", 400, 100, color=(241, 232, 205), size=50)
+	info_rect = render_text("INFO", 400, 250, color=(241, 232, 205), size=25)
+	board_rect = render_text("BOARD EDITOR", 400, 300, color=(241, 232, 205), size=25)
 	if game_mode == 1:
-		game_mode_rect = render_text("GAME MODE (player)", 400, 350, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (player)", 400, 350, color=(241, 232, 205), size=25)
 	elif game_mode == 2:
-		game_mode_rect = render_text("GAME MODE (random)", 400, 350, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (random)", 400, 350, color=(241, 232, 205), size=25)
 	elif game_mode == 3:
-		game_mode_rect = render_text("GAME MODE (easy)", 400, 350, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (easy)", 400, 350, color=(241, 232, 205), size=25)
 	elif game_mode == 4:
-		game_mode_rect = render_text("GAME MODE (normal)", 400, 350, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (normal)", 400, 350, color=(241, 232, 205), size=25)
 	elif game_mode == 5:
-		game_mode_rect = render_text("GAME MODE (mcts)", 400, 350, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (mcts)", 400, 350, color=(241, 232, 205), size=25)
 
-	play_rect = render_text("PLAY", 400, 400, color=(171, 148, 122), size=25)
+	play_rect = render_text("PLAY", 400, 400, color=(241, 232, 205), size=25)
 	
 	for event in pygame.event.get():
 		if event.type == QUIT:
