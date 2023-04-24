@@ -74,7 +74,7 @@ class Volume(pygame.sprite.Sprite):
 		self.image_index = 1 - self.image_index
 		self.image = self.images[self.image_index]
 		if self.image_index == 1:
-			mixer.music.play()
+			mixer.music.play(-1)
 		if self.image_index == 0:
 			mixer.music.stop()
 
@@ -443,7 +443,7 @@ def board_editor():
 	global in_menu
 	global group
 	global grid
-	screen.fill((24, 24, 24))
+	screen.fill((44, 34, 46))
 	menu_rect = render_text("< MENU", 100, 550, color=(241, 232, 205), size=25)
 	reset_rect = render_text("RESET", 400, 550, color=(241, 232, 205), size=25)
 
@@ -535,7 +535,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 	global in_game
 	global in_menu
 	
-	screen.fill((24, 24, 24))
+	screen.fill((44, 34, 46))
 	menu_rect = render_text("< MENU", 100, 550, color=(241, 232, 205), size=25)
 	if game_mode == 1:
 		if current_player == 1:
@@ -681,7 +681,7 @@ def menu():
 	global groupV
 	global volume_button
 
-	screen.fill((24, 24, 24))
+	screen.fill((44, 34, 46))
 
 	render_text("HEXXAGON", 400, 100, color=(241, 232, 205), size=50)
 	info_rect = render_text("INFO", 400, 250, color=(241, 232, 205), size=25)
@@ -732,7 +732,7 @@ def info():
 	global in_info
 	global in_menu
 
-	screen.fill((24, 24, 24))
+	screen.fill((44, 34, 46))
 	menu_rect = render_text("< MENU", 700, 550, color=(201, 166, 131), size=25)
 
 	render_text("Instructions", 400, 100, color=(201, 166, 131), size=50)
