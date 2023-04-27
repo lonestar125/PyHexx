@@ -684,9 +684,15 @@ def menu():
 	screen.fill((44, 34, 46))
 
 	render_text("HEXXAGON", 400, 100, color=(171, 148, 122), size=50)
+	# info_rect = render_text("INFO", 300, 250, color=(171, 148, 122), size=25)
 	
-	render_text("INFO", 297, 253, color=(0, 0, 0), size=25)
-	info_rect = render_text("INFO", 300, 250, color=(171, 148, 122), size=25)
+	x,y,info_image = sprite_show("info")
+	screen.blit(info_image,(x,y))
+	info_rect = pygame.Rect(x, y, info_image.get_width(), info_image.get_height())
+
+	x,y,play_image = sprite_show("play")
+	screen.blit(play_image,(x,y))
+	play_rect = pygame.Rect(x, y, play_image.get_width(), play_image.get_height())	
 	
 	board_rect = render_text("BOARD EDITOR", 430, 350, color=(171, 148, 122), size=25)
 	if game_mode == 1:
@@ -700,7 +706,7 @@ def menu():
 	elif game_mode == 5:
 		game_mode_rect = render_text("GAME MODE (mcts)", 400, 450, color=(171, 148, 122), size=25)
 
-	play_rect = render_text("PLAY", 330, 300, color=(171, 148, 122), size=25)
+	# play_rect = render_text("PLAY", 330, 300, color=(171, 148, 122), size=25)
 	
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -772,7 +778,18 @@ def info():
 
 				in_menu = True
 
-
+def sprite_show(sprite):
+	if sprite == 'info':
+		info_image = pygame.image.load('Sprites/info.png')
+		info_x = 250
+		info_y = 260
+		return info_x,info_y,info_image
+	
+	if sprite == 'play':
+		play_image = pygame.image.load('Sprites/play.png')
+		play_x = 250
+		play_y = 190
+		return play_x,play_y,play_image
 
 def main():
 	"""
