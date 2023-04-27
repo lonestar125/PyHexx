@@ -375,15 +375,15 @@ def end_turn(cloneable, jumpable, current_player):
 	score = get_score()
 	winner = check_victory(score)
 	if winner == 1:
-		render_text(f"RED WON", 400, 550, color=(189, 60, 32), size=25)
+		render_text(f"ORANGE WON", 400, 550, color=(247,150,23), size=25, center=True)
 		victory_sound = mixer.Sound('Sounds/victory.wav')
 		victory_sound.play()
 	elif winner == 2:
-		render_text(f"BLUE WON", 400, 550, color=(80, 138, 169), size=25)
+		render_text(f"BLUE WON", 400, 550, color=(77,155,230), size=25, center=True)
 		victory_sound = mixer.Sound('Sounds/victory.wav')
 		victory_sound.play()
 	elif winner == 3:
-		render_text(f"TIE", 400, 550, color=(171, 148, 122), size=25)
+		render_text(f"TIE", 400, 550, color=(171, 148, 122), size=25, center=True)
 		victory_sound = mixer.Sound('Sounds/victory.wav')
 		victory_sound.play()
 	current_player = abs(current_player - 3)
@@ -495,7 +495,7 @@ def board_editor():
 					for el in line:
 						if el["status"] != -1:
 							if not has_valid_path(line.index(el), grid.index(line), []):
-								render_text("INVALID BOARD", 400, 300, color=(189, 60, 32), size=50)
+								render_text("INVALID BOARD", 400, 300, color=(189, 60, 32), size=50, center=True)
 								pygame.display.update()
 								sleep(1)
 								return
@@ -503,7 +503,7 @@ def board_editor():
 				#check that both players have at least one tile
 				score = get_score()
 				if score[0] == 0 or score[1] == 0:
-					render_text("INVALID BOARD", 400, 300, color=(189, 60, 32), size=50)
+					render_text("INVALID BOARD", 400, 300, color=(189, 60, 32), size=50, center=True)
 					pygame.display.update()
 					sleep(1)
 					return
@@ -587,7 +587,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 	global in_menu
 	
 	screen.fill((44, 34, 46))
-#	menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
+	#menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
 
 	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
 	screen.blit(menu_image,(x_menu,y_menu))
@@ -596,9 +596,9 @@ def game(cloneable, jumpable, selected_tile, current_player):
 
 	if game_mode == 1:
 		if current_player == 1:
-			render_text(f"RED'S TURN", 700, 50, color=(189, 60, 32), size=25)
+			render_text(f"ORANGE'S TURN", 700, 50, color=(247,150,23), size=25, center=True)
 		else:
-			render_text(f"BLUE'S TURN", 700, 50, color=(80, 138, 169), size=25)
+			render_text(f"BLUE'S TURN", 700, 50, color=(77,155,230), size=25, center=True)
 	
 	# Go through events that are passed to the script by the window.
 	for event in pygame.event.get():
@@ -722,14 +722,17 @@ def draw():
 		display_scores(score)
 
 
-def render_text(text, x, y, color=(0, 0, 0), size=32, border=False):
+def render_text(text, x, y, color=(0, 0, 0), size=32, border=False, center=False):
 	'''
 	str, int, int, tuple, int, bool --> pygame.Rect
 	Renders text at a given position with a given color and size on the pygame screen
 	'''
 	font = pygame.font.Font('Fonts/pixeboy-font/Pixeboy-z8XGD.ttf', size)
 	text = font.render(text, True, color)
-	textRect = text.get_rect(center=(x,y))
+	if center == True:
+		textRect = text.get_rect(center=(x,y))
+	elif center == False:
+		textRect = text.get_rect(topleft=(x,y))
 	#draw a box around text if the border option is set to True
 	if border:
 		pygame.draw.rect(screen, (0, 0, 0), (textRect.x-5, textRect.y-5, textRect.width+10, textRect.height+10), 5)
@@ -751,7 +754,7 @@ def menu():
 
 	screen.fill((44, 34, 46))
 
-	render_text("PyHexx", 400, 100, color=(171, 148, 122), size=50)
+	render_text("PyHexx", 400, 100, color=(201, 166, 131), size=75, center=True)
 	# info_rect = render_text("INFO", 300, 250, color=(171, 148, 122), size=25)
 	
 	info_rect,x_info,y_info,info_image = sprite_show("info")
@@ -766,20 +769,19 @@ def menu():
 
 	board_rect,x_board,y_board,board_image = sprite_show("BE")
 	screen.blit(board_image,(x_board,y_board))	
-	board_render = render_text("BOARD EDITOR", 428, 377, color=(44, 34, 46), size=25)
-	board_rect = render_text("BOARD EDITOR", 430, 375, color=(171, 148, 122), size=25)
-
+	render_text("BOARD EDITOR", 335, 519, color=(44, 34, 46), size=25)
+	board_rect = render_text("BOARD EDITOR", 337, 517, color=(171, 148, 122), size=25)
 
 	if game_mode == 1:
-		game_mode_rect = render_text("GAME MODE (player)", 475, 230, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (player)", 475, 230, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 2:
-		game_mode_rect = render_text("GAME MODE (random)", 475, 230, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (random)", 475, 230, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 3:
-		game_mode_rect = render_text("GAME MODE (easy)", 475, 230, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (easy)", 475, 230, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 4:
-		game_mode_rect = render_text("GAME MODE (normal)", 475, 230, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (normal)", 475, 230, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 5:
-		game_mode_rect = render_text("GAME MODE (mcts)", 475, 230, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (mcts)", 475, 230, color=(171, 148, 122), size=25, center=True)
 
 	# play_rect = render_text("PLAY", 330, 300, color=(171, 148, 122), size=25)
 	
@@ -844,24 +846,24 @@ def info():
 
 	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
 
-	render_text("Instructions", 400, 100, color=(201, 166, 131), size=50)
-	render_text("GAMEPLAY", 100, 150, color=(158, 107, 58), size=20)
-	render_text("PyHexx is a strategy game board where the goal is to cover as many spaces of the board ", 350, 175, color=(171, 148, 122), size=15) # +15 pixels per line
-	render_text("with your color as possible. This is done by cloning, jumping, and converting your opponents tiles.", 376, 190, color=(171, 148, 122), size=15) # +40 per paragraph
-	render_text("MOVEMENT", 107, 230, color=(158, 107, 58), size=20) # +25 per title and paragraph
-	render_text("When it is your turn to move, simply select the tile that you wish to move by clicking on it.", 344, 255, color=(171, 148, 122), size=15)
-	render_text("This will let you move one space in any direction or jump two spaces in any direction (as long ", 358, 270, color=(171, 148, 122), size=15)
-	render_text("as that cell is empty). A player must make a move if one is available. Once a piece is ", 327, 285, color=(171, 148, 122), size=15)
-	render_text("selected, you may choose from different options:", 200, 300, color=(171, 148, 122), size=15)
-	render_text(" - If you move 1 space, you clone the piece", 225, 325, color=(171, 148, 122), size=15)
-	render_text(" - If you jump 2 spaces, you move the piece", 227, 340, color=(171, 148, 122), size=15)
-	render_text("CAPTURING PIECES", 146, 375, color=(158, 107, 58), size=20)
-	render_text("After a player captures an empty space, any opponent pieces that are adjacent to that new", 352, 400, color=(171, 148, 122), size=15)
-	render_text("location will also be captured (converted to your color).", 225, 415, color=(171, 148, 122), size=15)
-	render_text("WINNING", 90, 455, color=(158, 107, 58), size=20)
-	render_text("The game ends when there are no empty spaces or one player cannot move. If a player ", 340, 480, color=(171, 148, 122), size=15)
-	render_text("cannot move, the remaining empty spaces are captured by the other player and the game ", 348, 495, color=(171, 148, 122), size=15)
-	render_text("ends. The player with the majority of tiles on the board wins: 1 tile = 1 point", 300, 510, color=(171, 148, 122), size=15)
+	render_text("Instructions", 400, 100, color=(201, 166, 131), size=50, center=True) #MAIN TITLE
+	render_text("GAMEPLAY", 80, 150, color=(158, 107, 58), size=20) #SUBTITILE
+	render_text("PyHexx is a strategy game board where the goal is to cover as many spaces of the board ", 50, 175, color=(171, 148, 122), size=15) # +15 pixels per line
+	render_text("with your color as possible. This is done by cloning, jumping, and converting your opponents tiles.", 50, 190, color=(171, 148, 122), size=15) # +40 per paragraph
+	render_text("MOVEMENT", 80, 230, color=(158, 107, 58), size=20) # +25 per title and paragraph
+	render_text("When it is your turn to move, simply select the tile that you wish to move by clicking on it.", 50, 255, color=(171, 148, 122), size=15)
+	render_text("This will let you move one space in any direction or jump two spaces in any direction (as long ", 50, 270, color=(171, 148, 122), size=15)
+	render_text("as that cell is empty). A player must make a move if one is available. Once a piece is ", 50, 285, color=(171, 148, 122), size=15)
+	render_text("selected, you may choose from different options:", 50, 300, color=(171, 148, 122), size=15)
+	render_text(" - If you move 1 space, you clone the piece", 75, 325, color=(171, 148, 122), size=15)
+	render_text(" - If you jump 2 spaces, you move the piece", 75, 340, color=(171, 148, 122), size=15)
+	render_text("CAPTURING PIECES", 80, 375, color=(158, 107, 58), size=20)
+	render_text("After a player captures an empty space, any opponent pieces that are adjacent to that new", 50, 400, color=(171, 148, 122), size=15)
+	render_text("location will also be captured (converted to your color).", 50, 415, color=(171, 148, 122), size=15)
+	render_text("WINNING", 80, 455, color=(158, 107, 58), size=20)
+	render_text("The game ends when there are no empty spaces or one player cannot move. If a player ", 50, 480, color=(171, 148, 122), size=15)
+	render_text("cannot move, the remaining empty spaces are captured by the other player and the game ", 50, 495, color=(171, 148, 122), size=15)
+	render_text("ends. The player with the majority of tiles on the board wins: 1 tile = 1 point", 50, 510, color=(171, 148, 122), size=15)
 
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -942,8 +944,8 @@ def sprite_show(sprite):
 		return rect,x,y,img
 	if sprite == 'BE':
 		img = pygame.image.load('Sprites/boardedit.PNG')
-		x = 325
-		y = 340
+		x = 300
+		y = 490
 		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
 		return rect,x,y,img	
 
