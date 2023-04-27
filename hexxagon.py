@@ -634,7 +634,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 			move = layer_bot.two_layer(grid)
 
 		elif game_mode == 5:
-			move = mcts_bot.mcts(grid, total_tiles, num_iterations=50000, exploration_constant=1)
+			move = mcts_bot.mcts(grid, total_tiles, num_iterations=50000, ex_playloration_constant=1)
 
 		bot_move(move)
 		cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
@@ -681,7 +681,7 @@ def render_text(text, x, y, color=(0, 0, 0), size=32, border=False):
 	str, int, int, tuple, int, bool --> pygame.Rect
 	Renders text at a given position with a given color and size on the pygame screen
 	'''
-	font = pygame.font.Font('freesansbold.ttf', size)
+	font = pygame.font.Font('Fonts/pixeboy-font/Pixeboy-z8XGD.ttf', size)
 	text = font.render(text, True, color)
 	textRect = text.get_rect(center=(x,y))
 	#draw a box around text if the border option is set to True
@@ -700,21 +700,23 @@ def menu():
 	global in_info
 	global in_menu
 	global game_mode
-	global groupV
+	global group_volume
 	global volume_button
 
 	screen.fill((44, 34, 46))
 
-	render_text("HEXXAGON", 400, 100, color=(171, 148, 122), size=50)
+	render_text("PYhex", 400, 100, color=(171, 148, 122), size=50)
 	# info_rect = render_text("INFO", 300, 250, color=(171, 148, 122), size=25)
 	
-	x,y,info_image = sprite_show("info")
-	screen.blit(info_image,(x,y))
-	info_rect = pygame.Rect(x, y, info_image.get_width(), info_image.get_height())
+	info_rect,x_info,y_info,info_image = sprite_show("info")
+	screen.blit(info_image,(x_info,y_info))
 
-	x,y,play_image = sprite_show("play")
-	screen.blit(play_image,(x,y))
-	play_rect = pygame.Rect(x, y, play_image.get_width(), play_image.get_height())	
+	none,x_info,y_info,infoP_image = sprite_show("info_pressed")
+
+	play_rect,x_play,y_play,play_image = sprite_show("play")
+	screen.blit(play_image,(x_play,y_play))
+
+	none,x_play,y_play,playP_image = sprite_show("play_pressed")
 	
 	board_rect = render_text("BOARD EDITOR", 430, 350, color=(171, 148, 122), size=25)
 	if game_mode == 1:
@@ -739,9 +741,29 @@ def menu():
 			if volume_button.rect.collidepoint(x,y):
 				volume_button.Vupdate()
 			if play_rect.collidepoint(x,y):
+
+				screen.blit(playP_image,(x_play,y_play))
+				group_volume.draw(screen)
+				pygame.display.flip()
+				pygame.time.wait(250) 
+				screen.blit(play_image,(x_play,y_play))
+				group_volume.draw(screen)
+				pygame.display.flip()
+				pygame.time.wait(350)  
+
 				in_menu = False
 				in_game = True
 			elif info_rect.collidepoint(x,y):
+
+				screen.blit(infoP_image,(x_info,y_info))
+				group_volume.draw(screen)
+				pygame.display.flip()
+				pygame.time.wait(250) 
+				screen.blit(info_image,(x_info,y_info))
+				group_volume.draw(screen)
+				pygame.display.flip()
+				pygame.time.wait(350)  
+
 				in_menu = False
 				in_info = True
 			elif board_rect.collidepoint(x,y):
@@ -801,17 +823,36 @@ def info():
 				in_menu = True
 
 def sprite_show(sprite):
+	'''	
+str --> rect,int,int,surface
+
+	Function that helps with dispaying and organising sprite buttons
+	'''
 	if sprite == 'info':
-		info_image = pygame.image.load('Sprites/info.png')
-		info_x = 250
-		info_y = 260
-		return info_x,info_y,info_image
-	
+		img = pygame.image.load('Sprites/IMG_B.PNG')
+		x = 250
+		y = 260
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+	if sprite == 'info_pressed':
+		img = pygame.image.load('Sprites/IMG_A.PNG')
+		x = 250
+		y = 260
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
 	if sprite == 'play':
-		play_image = pygame.image.load('Sprites/play.png')
-		play_x = 250
-		play_y = 190
-		return play_x,play_y,play_image
+		img = pygame.image.load('Sprites/IMG_2.PNG')
+		x = 250
+		y = 190
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+	if sprite == 'play_pressed':
+		img = pygame.image.load('Sprites/IMG_1.PNG')
+		x = 250
+		y = 190
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+
 
 def main():
 	"""
@@ -824,7 +865,7 @@ def main():
 	pygame.display.set_caption("Hexxagon")
 	pygame.display.set_icon(icon)
 	
-	global groupV # Volume button group
+	global group_volume # Volume button group
 	global volume_button
 	
 	global group #pygame.sprite.Group object, contains all active tiles
@@ -863,9 +904,9 @@ def main():
 	mixer.music.pause()
 
 	# Volume button
-	groupV = pygame.sprite.RenderPlain()
+	group_volume = pygame.sprite.RenderPlain()
 	volume_button = Volume()  
-	groupV.add(volume_button)
+	group_volume.add(volume_button)
 
 
 	grid, group = create_board()
@@ -878,7 +919,7 @@ def main():
 			
 			while in_menu:
 				menu()
-				groupV.draw(screen)
+				group_volume.draw(screen)
 				pygame.display.flip()
 
 		elif in_board_editor: #BOARD EDITOR
