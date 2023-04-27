@@ -82,7 +82,7 @@ class Volume(pygame.sprite.Sprite):
 
 def create_board():
 	"""
-	Create the hexxagon board.
+	Create the hexagon board.
 	"""
 	x_size = 38
 	y_size = 45
@@ -464,8 +464,21 @@ def board_editor():
 	global group
 	global grid
 	screen.fill((44, 34, 46))
-	menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
-	reset_rect = render_text("RESET", 400, 550, color=(171, 148, 122), size=25)
+
+#	menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
+
+	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
+	screen.blit(menu_image,(x_menu,y_menu))
+
+	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
+
+
+#	reset_rect = render_text("RESET", 400, 550, color=(171, 148, 122), size=25)
+
+	reset_rect,x_reset,y_reset,reset_image = sprite_show("reset")
+	screen.blit(reset_image,(x_reset,y_reset))
+
+	none,x_reset,y_reset,resetP_image = sprite_show("reset_pressed")
 
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -496,6 +509,16 @@ def board_editor():
 					return
 				
 				save_board()
+
+				draw()
+				screen.blit(menuP_image,(x_menu,y_menu))
+				pygame.display.flip()
+				draw()
+				pygame.time.wait(250) 
+				screen.blit(menu_image,(x_menu,y_menu))
+				pygame.display.flip()
+				pygame.time.wait(350)  
+
 				in_board_editor = False
 				
 				menu_sound = mixer.Sound('Sounds/menu_leave.mp3')
@@ -507,6 +530,14 @@ def board_editor():
 			
 			if reset_rect.collidepoint(x,y):
 				group.empty()
+
+				screen.blit(resetP_image,(x_reset,y_reset))
+				pygame.display.flip()
+				pygame.time.wait(250) 
+				screen.blit(reset_image,(x_reset,y_reset))
+				pygame.display.flip()
+				pygame.time.wait(350)  
+
 				
 				grid, group = create_board()
 				reset_sound = mixer.Sound('Sounds/reset.wav')
@@ -556,7 +587,13 @@ def game(cloneable, jumpable, selected_tile, current_player):
 	global in_menu
 	
 	screen.fill((44, 34, 46))
-	menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
+#	menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
+
+	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
+	screen.blit(menu_image,(x_menu,y_menu))
+
+	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
+
 	if game_mode == 1:
 		if current_player == 1:
 			render_text(f"RED'S TURN", 700, 50, color=(189, 60, 32), size=25)
@@ -575,6 +612,15 @@ def game(cloneable, jumpable, selected_tile, current_player):
 
 				x,y = event.pos
 				if menu_rect.collidepoint(x,y):
+
+					screen.blit(menuP_image,(x_menu,y_menu))
+					draw()
+					pygame.display.flip()
+					pygame.time.wait(250) 
+					screen.blit(menu_image,(x_menu,y_menu))
+					pygame.display.flip()
+					pygame.time.wait(350)  
+
 					in_game = False
 					
 					menu_sound = mixer.Sound('Sounds/menu_leave.mp3')
@@ -705,7 +751,7 @@ def menu():
 
 	screen.fill((44, 34, 46))
 
-	render_text("PYhex", 400, 100, color=(171, 148, 122), size=50)
+	render_text("PyHexx", 400, 100, color=(171, 148, 122), size=50)
 	# info_rect = render_text("INFO", 300, 250, color=(171, 148, 122), size=25)
 	
 	info_rect,x_info,y_info,info_image = sprite_show("info")
@@ -717,18 +763,23 @@ def menu():
 	screen.blit(play_image,(x_play,y_play))
 
 	none,x_play,y_play,playP_image = sprite_show("play_pressed")
-	
-	board_rect = render_text("BOARD EDITOR", 430, 350, color=(171, 148, 122), size=25)
+
+	board_rect,x_board,y_board,board_image = sprite_show("BE")
+	screen.blit(board_image,(x_board,y_board))	
+	board_render = render_text("BOARD EDITOR", 428, 377, color=(44, 34, 46), size=25)
+	board_rect = render_text("BOARD EDITOR", 430, 375, color=(171, 148, 122), size=25)
+
+
 	if game_mode == 1:
-		game_mode_rect = render_text("GAME MODE (player)", 400, 450, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (player)", 475, 230, color=(171, 148, 122), size=25)
 	elif game_mode == 2:
-		game_mode_rect = render_text("GAME MODE (random)", 400, 450, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (random)", 475, 230, color=(171, 148, 122), size=25)
 	elif game_mode == 3:
-		game_mode_rect = render_text("GAME MODE (easy)", 400, 450, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (easy)", 475, 230, color=(171, 148, 122), size=25)
 	elif game_mode == 4:
-		game_mode_rect = render_text("GAME MODE (normal)", 400, 450, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (normal)", 475, 230, color=(171, 148, 122), size=25)
 	elif game_mode == 5:
-		game_mode_rect = render_text("GAME MODE (mcts)", 400, 450, color=(171, 148, 122), size=25)
+		game_mode_rect = render_text("GAME MODE (mcts)", 475, 230, color=(171, 148, 122), size=25)
 
 	# play_rect = render_text("PLAY", 330, 300, color=(171, 148, 122), size=25)
 	
@@ -786,11 +837,16 @@ def info():
 	global in_menu
 
 	screen.fill((44, 34, 46))
-	menu_rect = render_text("< MENU", 700, 550, color=(201, 166, 131), size=25)
+#	menu_rect = render_text("< MENU", 700, 550, color=(201, 166, 131), size=25)
+
+	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
+	screen.blit(menu_image,(x_menu,y_menu))
+
+	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
 
 	render_text("Instructions", 400, 100, color=(201, 166, 131), size=50)
 	render_text("GAMEPLAY", 100, 150, color=(158, 107, 58), size=20)
-	render_text("Hexxagon is a strategy game board where the goal is to cover as many spaces of the board ", 350, 175, color=(171, 148, 122), size=15) # +15 pixels per line
+	render_text("PyHexx is a strategy game board where the goal is to cover as many spaces of the board ", 350, 175, color=(171, 148, 122), size=15) # +15 pixels per line
 	render_text("with your color as possible. This is done by cloning, jumping, and converting your opponents tiles.", 376, 190, color=(171, 148, 122), size=15) # +40 per paragraph
 	render_text("MOVEMENT", 107, 230, color=(158, 107, 58), size=20) # +25 per title and paragraph
 	render_text("When it is your turn to move, simply select the tile that you wish to move by clicking on it.", 344, 255, color=(171, 148, 122), size=15)
@@ -814,6 +870,14 @@ def info():
 		if event.type == MOUSEBUTTONDOWN and event.button == 1: 
 			x,y = event.pos
 			if menu_rect.collidepoint(x,y):
+
+				screen.blit(menuP_image,(x_menu,y_menu))
+				pygame.display.flip()
+				pygame.time.wait(250) 
+				screen.blit(menu_image,(x_menu,y_menu))
+				pygame.display.flip()
+				pygame.time.wait(350)  
+
 				in_info = False
 				
 				menu_sound = mixer.Sound('Sounds/menu_leave.mp3')
@@ -824,7 +888,7 @@ def info():
 
 def sprite_show(sprite):
 	'''	
-str --> rect,int,int,surface
+	str --> rect,int,int,surface
 
 	Function that helps with dispaying and organising sprite buttons
 	'''
@@ -852,7 +916,36 @@ str --> rect,int,int,surface
 		y = 190
 		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
 		return rect,x,y,img
-
+	if sprite == 'menu':
+		img = pygame.image.load('Sprites/menu.PNG')
+		x = 625
+		y = 500
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+	if sprite == 'menu_pressed':
+		img = pygame.image.load('Sprites/menu-p.PNG')
+		x = 625
+		y = 500
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+	if sprite == 'reset':
+		img = pygame.image.load('Sprites/reset.PNG')
+		x = 75
+		y = 500
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+	if sprite == 'reset_pressed':
+		img = pygame.image.load('Sprites/reset-p.PNG')
+		x = 75
+		y = 500
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img
+	if sprite == 'BE':
+		img = pygame.image.load('Sprites/boardedit.PNG')
+		x = 325
+		y = 340
+		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+		return rect,x,y,img	
 
 def main():
 	"""
@@ -862,7 +955,7 @@ def main():
 	icon = pygame.image.load("Sprites/red.png")
 	
 	pygame.init()
-	pygame.display.set_caption("Hexxagon")
+	pygame.display.set_caption("PyHexx")
 	pygame.display.set_icon(icon)
 	
 	global group_volume # Volume button group
