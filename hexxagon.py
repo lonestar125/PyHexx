@@ -206,6 +206,26 @@ def get_score():
 				score[el["status"] - 1] += 1
 	return score
 
+def display_scores(score):
+	"""
+	None --> None
+	Displays the current score of the game on the screen
+	"""
+	
+	for i in range(score[1]):
+		blue = pygame.image.load("Sprites/blue_score.png").convert_alpha()
+		x = 50 + i * 7
+		y = 30
+		screen.blit(blue, (x,y))
+		
+		
+	for i in range(score[0]):
+		red = pygame.image.load("Sprites/orange_score.png").convert_alpha()
+		x = 50 + i * 7
+		y = 42
+		screen.blit(red, (x,y))
+	
+
 def get_total_tiles():
 	"""
 	None --> int
@@ -651,8 +671,10 @@ def draw():
 	global in_menu
 	group.draw(screen) # draw tile sprites from the Tile class
 	if in_game:
-		render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
-		render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
+		#render_text(f"RED: {score[0]}", 93, 50, color=(189, 60, 32), size=25)
+		#render_text(f"BLUE: {score[1]}", 100, 100, color=(80, 138, 169), size=25)
+		display_scores(score)
+
 
 def render_text(text, x, y, color=(0, 0, 0), size=32, border=False):
 	'''
