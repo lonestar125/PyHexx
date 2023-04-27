@@ -59,9 +59,10 @@ OR
 - add animations
 ```
 
-#FINAL TODO:
+# FINAL TODO: (deadline tmrw 19h30)
 ```
-FIX README -> last
+get signed picture and voice authorisations from our parents
+fix README, clean repo (add src and stuff) -> last
 - see pytris and snowflake
 
 projet:
