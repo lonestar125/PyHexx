@@ -463,22 +463,20 @@ def board_editor():
 	global in_menu
 	global group
 	global grid
-	screen.fill((44, 34, 46))
 
-#	menu_rect = render_text("< MENU", 100, 550, color=(171, 148, 122), size=25)
+#------------ Rendering
+
+	screen.fill((44, 34, 46))
 
 	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
 	screen.blit(menu_image,(x_menu,y_menu))
-
-	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
-
-
-#	reset_rect = render_text("RESET", 400, 550, color=(171, 148, 122), size=25)
+	x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
 
 	reset_rect,x_reset,y_reset,reset_image = sprite_show("reset")
 	screen.blit(reset_image,(x_reset,y_reset))
+	x_reset,y_reset,resetP_image = sprite_show("reset_pressed")
 
-	none,x_reset,y_reset,resetP_image = sprite_show("reset_pressed")
+#------------ Event checking
 
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -488,6 +486,8 @@ def board_editor():
 
 		if event.type == MOUSEBUTTONDOWN and event.button == 1: 
 			x,y = event.pos
+
+		#------------ Error checking
 
 			if menu_rect.collidepoint(x,y):
 				#check that every tile has a valid path to the center tile
@@ -538,12 +538,13 @@ def board_editor():
 				pygame.display.flip()
 				pygame.time.wait(350)  
 
-				
 				grid, group = create_board()
 				reset_sound = mixer.Sound('Sounds/reset.wav')
 				reset_sound.play()
 				
 				return
+
+#------------  Board update
 
 			for line in grid:
 				for el in line:		
@@ -592,7 +593,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
 	screen.blit(menu_image,(x_menu,y_menu))
 
-	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
+	x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
 
 	if game_mode == 1:
 		if current_player == 1:
@@ -752,38 +753,38 @@ def menu():
 	global group_volume
 	global volume_button
 
-	screen.fill((44, 34, 46))
+#------------ Rendering
 
+	screen.fill((44, 34, 46))
 	render_text("PyHexx", 400, 100, color=(201, 166, 131), size=75, center=True)
-	# info_rect = render_text("INFO", 300, 250, color=(171, 148, 122), size=25)
 	
 	info_rect,x_info,y_info,info_image = sprite_show("info")
 	screen.blit(info_image,(x_info,y_info))
-
-	none,x_info,y_info,infoP_image = sprite_show("info_pressed")
+	x_info,y_info,infoP_image = sprite_show("info_pressed")
 
 	play_rect,x_play,y_play,play_image = sprite_show("play")
 	screen.blit(play_image,(x_play,y_play))
-
-	none,x_play,y_play,playP_image = sprite_show("play_pressed")
+	x_play,y_play,playP_image = sprite_show("play_pressed")
 
 	board_rect,x_board,y_board,board_image = sprite_show("BE")
 	screen.blit(board_image,(x_board,y_board))	
+
 	render_text("BOARD EDITOR", 335, 519, color=(44, 34, 46), size=25)
 	board_rect = render_text("BOARD EDITOR", 337, 517, color=(171, 148, 122), size=25)
 
+	gm_x, gm_y = 405,280
 	if game_mode == 1:
-		game_mode_rect = render_text("GAME MODE (player)", 475, 230, color=(171, 148, 122), size=25, center=True)
+		game_mode_rect = render_text("GAME MODE (player)", gm_x, gm_y, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 2:
-		game_mode_rect = render_text("GAME MODE (random)", 475, 230, color=(171, 148, 122), size=25, center=True)
+		game_mode_rect = render_text("GAME MODE (random)", gm_x, gm_y, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 3:
-		game_mode_rect = render_text("GAME MODE (easy)", 475, 230, color=(171, 148, 122), size=25, center=True)
+		game_mode_rect = render_text("GAME MODE (easy)", gm_x, gm_y, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 4:
-		game_mode_rect = render_text("GAME MODE (normal)", 475, 230, color=(171, 148, 122), size=25, center=True)
+		game_mode_rect = render_text("GAME MODE (normal)", gm_x, gm_y, color=(171, 148, 122), size=25, center=True)
 	elif game_mode == 5:
-		game_mode_rect = render_text("GAME MODE (mcts)", 475, 230, color=(171, 148, 122), size=25, center=True)
+		game_mode_rect = render_text("GAME MODE (mcts)", gm_x, gm_y, color=(171, 148, 122), size=25, center=True)
 
-	# play_rect = render_text("PLAY", 330, 300, color=(171, 148, 122), size=25)
+#------------ Event checking
 	
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -828,7 +829,6 @@ def menu():
 				else:
 					game_mode += 1
 
-
 def info():
 	"""
 	None --> None
@@ -844,7 +844,7 @@ def info():
 	menu_rect,x_menu,y_menu,menu_image = sprite_show("menu")
 	screen.blit(menu_image,(x_menu,y_menu))
 
-	none,x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
+	x_menu,y_menu,menuP_image = sprite_show("menu_pressed")
 
 	render_text("Instructions", 400, 100, color=(201, 166, 131), size=50, center=True) #MAIN TITLE
 	render_text("GAMEPLAY", 80, 150, color=(158, 107, 58), size=20) #SUBTITILE
@@ -888,60 +888,57 @@ def info():
 
 				in_menu = True
 
+
 def sprite_show(sprite):
 	'''	
 	str --> rect,int,int,surface
 
 	Function that helps with dispaying and organising sprite buttons
 	'''
-	if sprite == 'info':
-		img = pygame.image.load('Sprites/IMG_B.PNG')
-		x = 250
-		y = 260
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'info_pressed':
-		img = pygame.image.load('Sprites/IMG_A.PNG')
-		x = 250
-		y = 260
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'play':
-		img = pygame.image.load('Sprites/IMG_2.PNG')
-		x = 250
+	if sprite == 'info' or sprite == 'info_pressed':
+		x = 410
 		y = 190
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'play_pressed':
-		img = pygame.image.load('Sprites/IMG_1.PNG')
-		x = 250
+		if sprite == 'info':
+			img = pygame.image.load('Sprites/IMG_B.PNG')
+			rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+			return rect,x,y,img
+		else:
+			img = pygame.image.load('Sprites/IMG_A.PNG')
+		return x,y,img
+
+	if sprite == 'play' or sprite == 'play_pressed':
+		x = 280
 		y = 190
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'menu':
-		img = pygame.image.load('Sprites/menu.PNG')
+		if sprite == 'play':
+			img = pygame.image.load('Sprites/IMG_2.PNG')
+			rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+			return rect,x,y,img
+		else:
+			img = pygame.image.load('Sprites/IMG_1.PNG')
+		return x,y,img
+
+	if sprite == 'menu' or sprite == 'menu_pressed':
 		x = 625
 		y = 500
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'menu_pressed':
-		img = pygame.image.load('Sprites/menu-p.PNG')
-		x = 625
-		y = 500
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'reset':
-		img = pygame.image.load('Sprites/reset.PNG')
+		if sprite == 'menu':
+			img = pygame.image.load('Sprites/menu.PNG')
+			rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+			return rect,x,y,img
+		else:
+			img = pygame.image.load('Sprites/menu-p.PNG')
+		return x,y,img
+
+	if sprite == 'reset' or sprite == 'reset_pressed':
 		x = 75
 		y = 500
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
-	if sprite == 'reset_pressed':
-		img = pygame.image.load('Sprites/reset-p.PNG')
-		x = 75
-		y = 500
-		rect = pygame.Rect(x, y, img.get_width(), img.get_height())
-		return rect,x,y,img
+		if sprite == 'reset':
+			img = pygame.image.load('Sprites/reset.PNG')
+			rect = pygame.Rect(x, y, img.get_width(), img.get_height())
+			return rect,x,y,img
+		else:
+			img = pygame.image.load('Sprites/reset-p.PNG')
+		return x,y,img
+
 	if sprite == 'BE':
 		img = pygame.image.load('Sprites/boardedit.PNG')
 		x = 300
