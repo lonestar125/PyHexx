@@ -678,10 +678,10 @@ def game(cloneable, jumpable, selected_tile, current_player):
 			move = one_layer_best_move(current_player)
 		
 		elif game_mode == 4:
-			move = layer_bot.two_layer(grid)
+			move = bots.layer_bot.two_layer(grid)
 
 		elif game_mode == 5:
-			move = mcts_bot.mcts(grid, total_tiles, num_iterations=50000, ex_playloration_constant=1)
+			move = bots.mcts_bot.mcts(grid, total_tiles, num_iterations=50000, ex_playloration_constant=1)
 
 		bot_move(move)
 		cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
