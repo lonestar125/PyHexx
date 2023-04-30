@@ -681,7 +681,7 @@ def game(cloneable, jumpable, selected_tile, current_player):
 			move = bots.layer_bot.two_layer(grid)
 
 		elif game_mode == 5:
-			move = bots.mcts_bot.mcts(grid, total_tiles, num_iterations=50000, ex_playloration_constant=1)
+			move = bots.mcts_bot.mcts(grid, total_tiles, num_iterations=50000, exploration_constant=1)
 
 		bot_move(move)
 		cloneable, jumpable, current_player = end_turn(cloneable, jumpable, current_player)
